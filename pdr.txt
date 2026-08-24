@@ -1,0 +1,2789 @@
+# PDR MASTER
+
+# FAREL VIRTUAL MVP v0.1
+
+### Plataforma digital experimental 1×1 para validação do card game FAREL
+
+**Status:** Blueprint mestre
+**Versão:** 0.1
+**Backend provisório:** Google Sheets + Google Apps Script
+**Frontend:** Next.js + TypeScript
+**Deploy:** Vercel
+**Desenvolvimento assistido:** AGY CLI
+**Objetivo:** Playtest online 1×1
+**Prioridade:** Regras > Motor > Jogabilidade > Telemetria > Visual
+
+---
+
+# 0. RESUMO EXECUTIVO
+
+## 0.1 O que é o FAREL VIRTUAL?
+
+O **FAREL VIRTUAL MVP** é uma versão digital experimental do jogo de cartas FAREL, destinada inicialmente a partidas **1 jogador × 1 jogador**, em salas privadas, para testar, observar e ajustar as regras do jogo.
+
+O MVP não pretende ser ainda a versão comercial definitiva de FAREL.
+
+Ele é um:
+
+> **laboratório digital de game design.**
+
+A função principal do sistema será permitir que duas pessoas joguem uma partida real e que cada ação seja registrada para posterior análise.
+
+---
+
+# 1. OBJETIVO DO MVP
+
+## 1.1 Pergunta central
+
+O MVP precisa responder:
+
+> **"As regras fundamentais de FAREL produzem uma partida jogável, compreensível, estratégica e suficientemente divertida para justificar uma próxima versão?"**
+
+---
+
+## 1.2 Objetivos secundários
+
+Validar:
+
+* fluxo de turnos;
+* economia de energia;
+* compra de cartas;
+* ocupação do tabuleiro;
+* criaturas;
+* estruturas;
+* canalização;
+* combate;
+* d6;
+* buffs;
+* defesa do herói;
+* destruição;
+* condição de vitória;
+* duração das partidas;
+* equilíbrio inicial;
+* experiência de dois jogadores;
+* clareza das regras.
+
+---
+
+# 2. O QUE O MVP NÃO É
+
+Não construir agora:
+
+* matchmaking;
+* ranking;
+* login completo;
+* perfil social;
+* amigos;
+* chat;
+* loja;
+* moedas;
+* compra de cartas;
+* coleção;
+* boosters;
+* crafting;
+* campanhas;
+* IA;
+* torneios;
+* sistema competitivo;
+* dezenas de decks;
+* centenas de cartas;
+* animações complexas;
+* aplicativo mobile nativo;
+* monetização.
+
+Esses itens pertencem ao **FAREL VIRTUAL V2+**.
+
+---
+
+# 3. PRINCÍPIO ARQUITETURAL CENTRAL
+
+A arquitetura deverá respeitar:
+
+> **O Game Engine é a fonte da verdade.**
+
+A interface não decide regras.
+
+O Google Sheets não decide regras.
+
+O jogador não decide resultados.
+
+O fluxo é:
+
+```text
+JOGADOR
+   ↓
+AÇÃO
+   ↓
+GAME ENGINE
+   ↓
+VALIDAÇÃO
+   ↓
+ALTERAÇÃO DE ESTADO
+   ↓
+EVENTO
+   ↓
+PERSISTÊNCIA
+   ↓
+SINCRONIZAÇÃO
+   ↓
+OUTRO JOGADOR
+```
+
+---
+
+# 4. STACK
+
+## Frontend
+
+* Next.js
+* React
+* TypeScript
+* Tailwind CSS
+
+## Backend provisório
+
+* Google Apps Script
+
+## Banco de dados provisório
+
+* Google Sheets
+
+## Deploy
+
+* Vercel
+
+## Versionamento
+
+* GitHub
+
+## Desenvolvimento
+
+* AGY CLI
+
+---
+
+# 5. PRINCÍPIO DE PORTABILIDADE
+
+Google Sheets é **provisório**.
+
+Portanto:
+
+```text
+GAME ENGINE
+    ↓
+DATA INTERFACE
+    ↓
+Google Sheets
+```
+
+e não:
+
+```text
+GAME ENGINE
+    ↓
+Google Sheets
+```
+
+A camada de persistência deverá poder ser posteriormente substituída:
+
+```text
+Google Sheets
+      ↓
+Supabase
+      ↓
+PostgreSQL/backend próprio
+```
+
+sem reescrever o núcleo das regras.
+
+---
+
+# 6. VISÃO MACRO DA ARQUITETURA
+
+```text
+                         FAREL
+                           │
+                    ┌──────▼──────┐
+                    │   RULESET   │
+                    └──────┬──────┘
+                           │
+                    ┌──────▼──────┐
+                    │ GAME ENGINE  │
+                    └──────┬──────┘
+                           │
+             ┌─────────────┼─────────────┐
+             │             │             │
+             ▼             ▼             ▼
+          ACTIONS        STATE         EVENTS
+             │             │             │
+             └─────────────┼─────────────┘
+                           │
+                    ┌──────▼──────┐
+                    │ DATA LAYER  │
+                    └──────┬──────┘
+                           │
+                    GOOGLE APPS SCRIPT
+                           │
+                    GOOGLE SHEETS
+                           │
+                  ┌────────┴────────┐
+                  │                 │
+                 P1                P2
+                  │                 │
+                  └───────WEB───────┘
+```
+
+---
+
+# 7. MODELO DE CLIENTE/SERVIDOR
+
+## Cliente
+
+Responsável por:
+
+* renderizar;
+* receber input;
+* mostrar estado;
+* enviar ações;
+* mostrar animações;
+* mostrar feedback.
+
+## Servidor
+
+Responsável por:
+
+* validar ações;
+* controlar turnos;
+* calcular energia;
+* comprar cartas;
+* executar efeitos;
+* realizar combate;
+* gerar dados;
+* determinar vencedor;
+* persistir estado.
+
+---
+
+# 8. O JOGO
+
+## 8.1 Conceito
+
+Os deuses de Farel, seres imortais que disputam batalhas por meio de campeões e exércitos retirados de diferentes eras, canalizam energia para o campo de batalha.
+
+O herói representa o elo entre o deus e o mundo mortal.
+
+Se o herói morrer:
+
+> **a conexão é rompida e o jogador perde.**
+
+---
+
+# 9. TABULEIRO
+
+Cada jogador possui:
+
+```text
+1 SLOT DE HERÓI
+
+5 SLOTS DE CRIATURAS
+
+5 SLOTS DE ESTRUTURAS
+
+3 SLOTS DE CANALIZAÇÃO
+```
+
+Representação:
+
+```text
+                 OPONENTE
+
+             [    HERÓI    ]
+
+       [ C ][ C ][ C ][ C ][ C ]
+
+       [ S ][ S ][ S ][ S ][ S ]
+
+       [ M ][ M ][ M ]
+
+────────────────────────────────────
+
+       [ M ][ M ][ M ]
+
+       [ S ][ S ][ S ][ S ][ S ]
+
+       [ C ][ C ][ C ][ C ][ C ]
+
+             [    HERÓI    ]
+
+                    VOCÊ
+```
+
+---
+
+# 10. LANES
+
+As criaturas ocupam cinco posições correspondentes.
+
+```text
+LANE 1
+LANE 2
+LANE 3
+LANE 4
+LANE 5
+```
+
+Uma criatura ataca prioritariamente a casa inimiga localizada na mesma lane.
+
+---
+
+# 11. HIERARQUIA DE ALVO
+
+Quando uma criatura realiza ataque:
+
+```text
+CRIATURA INIMIGA
+      ↓
+se não existir
+      ↓
+ESTRUTURA
+      ↓
+se não existir
+      ↓
+HERÓI
+```
+
+Portanto:
+
+```text
+CRIATURA
+   ↓
+CRIATURA
+   ↓
+ESTRUTURA
+   ↓
+HERÓI
+```
+
+---
+
+# 12. HERÓI
+
+Cada jogador possui exatamente:
+
+```text
+1 HERÓI
+```
+
+O herói:
+
+* possui vida;
+* pode atacar;
+* pode defender;
+* pode receber dano;
+* pode receber buffs;
+* pode morrer.
+
+Se:
+
+```text
+hero.health <= 0
+```
+
+então:
+
+```text
+GAME OVER
+```
+
+---
+
+# 13. DEFESA DO HERÓI
+
+Regra atual (Herói Coringa):
+
+> O herói pode ser utilizado para defender qualquer casa do tabuleiro. Ele pode defender ataques de qualquer tipo e não há limite de quantas defesas ele pode fazer por turno.
+
+Portanto, diferentemente das criaturas:
+
+```text
+CRIATURA
+→ defesa/ataque associado à sua lane
+
+HERÓI
+→ pode intervir em qualquer lane, quantas vezes quiser
+```
+
+**Nota:** Se o herói morrer ao realizar uma defesa (vida chegar a 0), a conexão é rompida e o jogador perde a partida imediatamente.
+
+---
+
+# 14. ENERGIA
+
+## Energia inicial
+
+Cada jogador começa com:
+
+```text
+5 ENERGY
+```
+
+Essa quantidade representa a energia base permanente.
+
+---
+
+## Estruturas
+
+Estruturas podem gerar energia adicional.
+
+Exemplo conceitual:
+
+```text
+BASE = 5
+
+ESTRUTURA A = +1
+ESTRUTURA B = +2
+
+TOTAL = 8
+```
+
+Se uma estrutura for destruída:
+
+```text
+8
+↓
+7
+```
+
+ou conforme a contribuição perdida.
+
+---
+
+# 15. DISTINÇÃO FUNDAMENTAL
+
+Precisamos separar:
+
+### Capacidade de geração
+
+```text
+MAX ENERGY GENERATION
+```
+
+de:
+
+### Energia disponível naquele turno
+
+```text
+CURRENT ENERGY
+```
+
+Uma estrutura pode aumentar a quantidade disponível por turno sem significar que energia não gasta seja acumulada indefinidamente.
+
+---
+
+# 16. MODELO DE ENERGIA
+
+```text
+base_energy = 5
+
+bonus_energy = soma das estruturas geradoras ativas
+
+energy_income =
+base_energy + bonus_energy
+```
+
+No início do turno:
+
+```text
+current_energy = energy_income
+```
+
+### ENERGIA RESTANTE
+
+> **A energia não gasta obrigatoriamente desaparece ao final do turno.**
+
+A energia deve ser utilizada dentro do turno atual e não acumula para os próximos turnos.
+
+---
+
+# 17. CARTAS
+
+O jogo começa com:
+
+```text
+5 cartas na mão
+```
+
+No início de cada turno:
+
+```text
++1 carta
+```
+
+Limite:
+
+```text
+5 cartas
+```
+
+O jogador não pode terminar o turno com mais de cinco cartas.
+
+---
+
+# 18. INTERPRETAÇÃO DO LIMITE DE MÃO
+
+A regra do limite de mão funciona da seguinte forma:
+
+> **Durante o turno, o jogador pode ter um número ilimitado de cartas na mão (ex: 100 cartas).**
+
+Porém, na fase final de encerramento do turno (End Step):
+
+> **O jogador deve terminar o turno com o máximo de 5 cartas na mão.**
+
+Se ao final do turno o jogador possuir mais do que 5 cartas, ele deverá escolher e descartar todas as excedentes até que lhe restem exatamente 5.
+
+---
+
+# 19. TIPOS DE CARTAS
+
+O sistema deverá suportar inicialmente:
+
+```text
+CREATURE
+STRUCTURE
+SPELL
+```
+
+e:
+
+```text
+HERO
+```
+
+como entidade separada.
+
+---
+
+# 20. CRIATURAS
+
+Cada criatura possui:
+
+* custo;
+* vida;
+* habilidades;
+* modificadores;
+* estado;
+* lane;
+* possibilidade de ataque.
+
+### Ataque
+
+Criaturas não possuem necessariamente um valor fixo de ataque.
+
+O dano base é:
+
+```text
+1d6
+```
+
+---
+
+# 21. D6
+
+Quando uma criatura ou herói ataca:
+
+```text
+roll = 1d6
+```
+
+Resultado:
+
+```text
+1
+2
+3
+4
+5
+6
+```
+
+O dano base corresponde ao resultado.
+
+---
+
+# 22. BUFFS
+
+Podem existir modificadores:
+
+```text
+1d6 + 1
+1d6 + 2
+1d6 + 3
+```
+
+Exemplo:
+
+```text
+roll = 5
+buff = +2
+
+damage = 7
+```
+
+### LIMITES DE DANO/BUFFS
+
+Não existe limite para a quantidade de buffs ou para o dano final.
+
+Se:
+
+```text
+6 + 5
+```
+
+resulta em:
+
+```text
+11
+```
+
+O dano causado será exatamente 11. (Sem teto máximo).
+
+---
+
+# 23. VIDA
+
+Criaturas e estruturas possuem vida.
+
+Exemplo:
+
+```text
+HP = 6
+```
+
+Se:
+
+```text
+HP <= 0
+```
+
+a entidade é destruída.
+
+---
+
+# 24. VIDA NÃO REGENERA
+
+Após combate:
+
+```text
+HP permanece reduzido
+```
+
+Não existe regeneração automática no momento.
+
+---
+
+# 25. SUMMONING SICKNESS
+
+Criaturas recém-invocadas:
+
+```text
+CAN_ATTACK = FALSE
+```
+
+durante o turno em que entram.
+
+Exceção:
+
+```text
+card.can_attack_on_entry = TRUE
+```
+
+ou habilidade equivalente.
+
+---
+
+# 26. ESTRUTURAS
+
+Estruturas:
+
+* ocupam slots;
+* possuem vida;
+* podem gerar energia;
+* podem ser destruídas;
+* podem possuir efeitos.
+
+Quando uma estrutura geradora é destruída:
+
+```text
+bonus_energy
+```
+
+é recalculado.
+
+---
+
+# 27. CANALIZAÇÃO
+
+Existem:
+
+```text
+3 SLOTS DE CANALIZAÇÃO
+```
+
+Magias canalizadas não são necessariamente resolvidas imediatamente.
+
+Fluxo:
+
+```text
+CARTA
+ ↓
+CANALIZAR
+ ↓
+SLOT DE CANALIZAÇÃO
+ ↓
+CONDIÇÃO
+ ↓
+ATIVAÇÃO
+ ↓
+EFEITO
+```
+
+---
+
+# 28. AÇÕES
+
+Todas as ações devem ser representadas por comandos.
+
+Exemplos:
+
+```text
+PLAY_CARD
+SUMMON_CREATURE
+BUILD_STRUCTURE
+CHANNEL_SPELL
+ACTIVATE_SPELL
+DECLARE_ATTACK
+DEFEND_WITH_HERO
+END_TURN
+```
+
+---
+
+# 29. GAME ENGINE
+
+Estrutura:
+
+```text
+game/
+├── engine/
+│   ├── GameEngine
+│   ├── TurnEngine
+│   ├── CombatEngine
+│   ├── EnergyEngine
+│   ├── CardEngine
+│   └── VictoryEngine
+│
+├── actions/
+├── validation/
+├── state/
+├── events/
+└── rng/
+```
+
+---
+
+# 30. GAME STATE
+
+O estado mínimo:
+
+```text
+GameState
+├── gameId
+├── status
+├── turn
+├── activePlayer
+├── players
+│   ├── player1
+│   └── player2
+├── board
+├── hands
+├── decks
+├── energy
+├── events
+└── winner
+```
+
+---
+
+# 31. PLAYER STATE
+
+Cada jogador:
+
+```text
+PlayerState
+├── playerId
+├── hero
+├── energy
+├── hand
+├── deck
+├── discard
+├── creatures
+├── structures
+├── channeling
+└── status
+```
+
+---
+
+# 32. ENTIDADES DO TABULEIRO
+
+Cada entidade terá:
+
+```text
+entityId
+cardId
+ownerId
+type
+slot
+health
+maxHealth
+status
+modifiers
+```
+
+---
+
+# 33. ESTADOS DE CRIATURA
+
+```text
+SUMMONED
+READY
+EXHAUSTED
+DAMAGED
+DESTROYED
+```
+
+---
+
+# 34. ESTADOS DA PARTIDA
+
+```text
+WAITING
+SETUP
+READY
+PLAYING
+COMBAT
+FINISHED
+CANCELLED
+```
+
+---
+
+# 35. FLUXO DO TURNO
+
+Modelo:
+
+```text
+TURN START
+    ↓
+REFRESH STATE
+    ↓
+GENERATE ENERGY
+    ↓
+DRAW CARD
+    ↓
+ACTION PHASE
+    ↓
+COMBAT
+    ↓
+END TURN
+    ↓
+NEXT PLAYER
+```
+
+---
+
+# 36. FIM DO TURNO
+
+No final do turno:
+
+1. verificar ataques;
+2. executar combate, caso aplicável;
+3. aplicar efeitos;
+4. verificar mortes;
+5. verificar vitória;
+6. registrar eventos;
+7. limpar estados temporários;
+8. passar turno.
+
+---
+
+# 37. ATAQUE AUTOMÁTICO OU OPCIONAL
+
+Atualmente:
+
+> **EM ABERTO**
+
+Precisamos testar:
+
+### Modelo A
+
+Ataque obrigatório.
+
+### Modelo B
+
+Ataque opcional.
+
+A arquitetura deverá suportar ambos:
+
+```text
+mandatory_attack = true/false
+```
+
+em `CONFIG`.
+
+Recomendação inicial:
+
+```text
+mandatory_attack = false
+```
+
+para facilitar playtest exploratório.
+
+---
+
+# 38. BANCO GOOGLE SHEETS
+
+Planilha:
+
+```text
+FAREL_VIRTUAL_DB
+```
+
+Abas oficiais:
+
+```text
+CONFIG
+PLAYERS
+ROOMS
+GAMES
+PLAYER_STATE
+GAME_STATE
+PLAYER_CARDS
+CARDS
+DECKS
+DECK_CARDS
+HEROES
+ACTIONS
+EVENTS
+MATCHES
+PLAYTEST
+```
+
+---
+
+# 39. CONFIG
+
+Campos:
+
+```text
+key
+value
+type
+description
+updated_at
+```
+
+Exemplo:
+
+| key                | value | type    |
+| ------------------ | ----: | ------- |
+| base_energy        |     5 | number  |
+| starting_hand      |     5 | number  |
+| max_hand           |     5 | number  |
+| draw_per_turn      |     1 | number  |
+| creature_slots     |     5 | number  |
+| structure_slots    |     5 | number  |
+| channeling_slots   |     3 | number  |
+| attack_dice        |     6 | number  |
+| mandatory_attack   | false | boolean |
+| hero_defense_limit |     1 | number  |
+
+`hero_defense_limit` permanece **provisório**.
+
+---
+
+# 40. PLAYERS
+
+```text
+player_id
+display_name
+session_token
+created_at
+last_seen
+status
+```
+
+Sem cadastro permanente no MVP.
+
+---
+
+# 41. ROOMS
+
+```text
+room_id
+room_code
+status
+player_1
+player_2
+game_id
+created_at
+updated_at
+```
+
+Status:
+
+```text
+WAITING
+READY
+STARTED
+FINISHED
+CANCELLED
+```
+
+---
+
+# 42. GAMES
+
+```text
+game_id
+room_id
+status
+turn_number
+active_player
+player_1
+player_2
+winner
+loser
+started_at
+ended_at
+last_event_id
+```
+
+---
+
+# 43. PLAYER_STATE
+
+```text
+game_id
+player_id
+hero_id
+current_energy
+base_energy
+bonus_energy
+hand_count
+deck_count
+discard_count
+has_ended_turn
+hero_health
+hero_max_health
+```
+
+---
+
+# 44. GAME_STATE
+
+Uma linha por entidade.
+
+```text
+game_id
+entity_id
+owner_id
+entity_type
+card_id
+slot
+health
+max_health
+status
+can_attack
+attack_modifier
+created_turn
+updated_at
+```
+
+---
+
+# 45. PLAYER_CARDS
+
+Esta aba é importante para manter **informação oculta**.
+
+```text
+game_id
+player_id
+card_instance_id
+card_id
+zone
+position
+status
+```
+
+Zonas:
+
+```text
+DECK
+HAND
+BOARD
+CHANNELING
+DISCARD
+```
+
+O cliente do jogador **nunca recebe a mão do adversário**.
+
+---
+
+# 46. CARDS
+
+```text
+card_id
+name
+type
+cost
+health
+description
+ability
+attack_modifier
+can_attack_on_entry
+target_type
+energy_generation
+enabled
+version
+```
+
+---
+
+# 47. DECKS
+
+```text
+deck_id
+name
+hero_id
+description
+enabled
+version
+```
+
+---
+
+# 48. DECK_CARDS
+
+```text
+deck_id
+card_id
+quantity
+```
+
+---
+
+# 49. HEROES
+
+```text
+hero_id
+name
+health
+max_health
+description
+ability
+attack_modifier
+enabled
+version
+```
+
+---
+
+# 50. ACTIONS
+
+```text
+action_id
+game_id
+turn_number
+player_id
+action_type
+payload
+status
+error_code
+timestamp
+```
+
+Exemplo:
+
+```json
+{
+  "card_id": "ORC001",
+  "slot": 3
+}
+```
+
+---
+
+# 51. EVENTS
+
+```text
+event_id
+game_id
+turn_number
+event_type
+actor_id
+target_id
+value
+metadata
+timestamp
+```
+
+Tipos:
+
+```text
+GAME_CREATED
+GAME_STARTED
+TURN_STARTED
+CARD_DRAWN
+ENERGY_GENERATED
+CARD_PLAYED
+CREATURE_SUMMONED
+STRUCTURE_BUILT
+SPELL_CHANNELLED
+SPELL_ACTIVATED
+ATTACK_DECLARED
+DICE_ROLLED
+DAMAGE_DEALT
+CREATURE_DESTROYED
+STRUCTURE_DESTROYED
+HERO_DAMAGED
+HERO_DESTROYED
+TURN_ENDED
+GAME_WON
+```
+
+---
+
+# 52. MATCHES
+
+Resumo final:
+
+```text
+game_id
+duration_seconds
+turns
+winner
+loser
+reason
+created_at
+ended_at
+```
+
+---
+
+# 53. PLAYTEST
+
+Dados derivados:
+
+```text
+game_id
+winner
+turns
+duration
+p1_cards_played
+p2_cards_played
+p1_energy_spent
+p2_energy_spent
+p1_damage
+p2_damage
+creatures_destroyed
+structures_destroyed
+hero_defenses
+dice_rolls
+average_roll
+```
+
+---
+
+# 54. GOOGLE APPS SCRIPT
+
+Estrutura:
+
+```text
+apps-script/
+├── Code.gs
+├── Router.gs
+├── Rooms.gs
+├── Games.gs
+├── Actions.gs
+├── State.gs
+├── Events.gs
+├── Sheets.gs
+├── Auth.gs
+└── Utils.gs
+```
+
+---
+
+# 55. API
+
+Endpoints conceituais:
+
+```text
+POST /room/create
+POST /room/join
+GET  /room/:id
+
+POST /game/start
+GET  /game/:id/state
+POST /game/:id/action
+GET  /game/:id/events
+POST /game/:id/leave
+```
+
+Como Apps Script trabalha como Web App, a implementação real poderá concentrar tudo em:
+
+```text
+doGet()
+doPost()
+```
+
+com roteamento interno.
+
+---
+
+# 56. CRIAÇÃO DE SALA
+
+```text
+POST
+/room/create
+```
+
+Resposta:
+
+```json
+{
+  "roomId": "R001",
+  "roomCode": "FA7K2P",
+  "playerId": "P001"
+}
+```
+
+---
+
+# 57. ENTRADA NA SALA
+
+```text
+POST
+/room/join
+```
+
+Payload:
+
+```json
+{
+  "roomCode": "FA7K2P",
+  "displayName": "Player 2"
+}
+```
+
+---
+
+# 58. CONSULTA DO ESTADO
+
+```text
+GET
+/game/G001/state
+```
+
+A resposta deve ser **sanitizada por jogador**.
+
+P1 recebe:
+
+```text
+P1 hand
+P1 board
+P2 board
+P2 public information
+```
+
+mas não:
+
+```text
+P2 hand
+P2 hidden deck
+```
+
+---
+
+# 59. EXECUÇÃO DE AÇÃO
+
+```text
+POST
+/game/G001/action
+```
+
+Payload:
+
+```json
+{
+  "actionType": "PLAY_CARD",
+  "payload": {
+    "cardInstanceId": "CI001",
+    "slot": 3
+  }
+}
+```
+
+---
+
+# 60. VALIDAÇÃO
+
+Toda ação deve passar:
+
+```text
+AUTH
+ ↓
+ROOM CHECK
+ ↓
+PLAYER CHECK
+ ↓
+TURN CHECK
+ ↓
+RULE VALIDATION
+ ↓
+STATE MUTATION
+ ↓
+EVENT
+ ↓
+PERSIST
+```
+
+---
+
+# 61. CONCORRÊNCIA
+
+Google Sheets possui limitações de concorrência.
+
+Portanto, Apps Script deverá usar:
+
+> **LockService**
+
+para operações críticas.
+
+Exemplo:
+
+```text
+P1 END_TURN
+      +
+P2 ACTION
+```
+
+não podem alterar o estado simultaneamente de maneira inconsistente.
+
+---
+
+# 62. SINCRONIZAÇÃO
+
+Como não estamos usando Supabase Realtime inicialmente:
+
+```text
+CLIENT
+ ↓
+GET STATE
+ ↓
+Apps Script
+ ↓
+Sheets
+```
+
+Polling inicial:
+
+```text
+1000–2000 ms
+```
+
+Somente durante uma partida ativa.
+
+---
+
+# 63. OTIMIZAÇÃO DE POLLING
+
+Não consultar todas as abas.
+
+O cliente deve receber:
+
+```text
+state_version
+```
+
+Exemplo:
+
+```text
+version = 43
+```
+
+O cliente tem:
+
+```text
+version = 42
+```
+
+Então:
+
+```text
+GET
+```
+
+retorna:
+
+```text
+version 43
+```
+
+Se nada mudou:
+
+```text
+304 / NO_CHANGE
+```
+
+ou resposta equivalente.
+
+---
+
+# 64. FRONTEND
+
+Estrutura:
+
+```text
+app/
+├── page.tsx
+├── room/
+├── lobby/
+├── game/
+└── rules/
+
+components/
+├── board/
+├── cards/
+├── hand/
+├── hero/
+├── energy/
+├── combat/
+├── channeling/
+├── battle-log/
+└── ui/
+```
+
+---
+
+# 65. TELAS
+
+## Tela 1
+
+### HOME
+
+```text
+FAREL
+
+RPG DE CARTAS
+
+[ CRIAR PARTIDA ]
+
+[ ENTRAR EM PARTIDA ]
+```
+
+---
+
+## Tela 2
+
+### JOIN
+
+```text
+CÓDIGO DA PARTIDA
+
+[ ______ ]
+
+[ ENTRAR ]
+```
+
+---
+
+## Tela 3
+
+### LOBBY
+
+```text
+FAREL
+
+SALA: FA7K2P
+
+PLAYER 1
+● READY
+
+PLAYER 2
+● READY
+
+[ INICIAR ]
+```
+
+---
+
+## Tela 4
+
+### GAME
+
+Principal interface do jogo.
+
+---
+
+## Tela 5
+
+### RESULT
+
+```text
+VITÓRIA
+
+SEU HERÓI SOBREVIVEU
+
+12 TURNOS
+03:42
+
+[ NOVA PARTIDA ]
+```
+
+---
+
+# 66. BOARD UI
+
+A prioridade visual:
+
+```text
+1. Estado
+2. Legibilidade
+3. Interação
+4. Estética
+```
+
+Não começar com efeitos cinematográficos.
+
+---
+
+# 67. COMPONENTES
+
+```text
+GameBoard
+OpponentHero
+PlayerHero
+CreatureLane
+StructureLane
+ChannelingZone
+Hand
+EnergyCounter
+TurnIndicator
+ActionBar
+BattleLog
+DiceRoll
+CardModal
+TargetSelector
+GameResult
+```
+
+---
+
+# 68. CARTAS
+
+Toda carta precisa mostrar:
+
+```text
+nome
+tipo
+custo
+vida
+efeito
+estado
+```
+
+Não mostrar informações irrelevantes.
+
+---
+
+# 69. INTERAÇÃO
+
+Ao clicar em uma carta:
+
+```text
+seleciona
+ ↓
+mostra opções válidas
+ ↓
+seleciona alvo
+ ↓
+confirma
+ ↓
+envia ACTION
+```
+
+---
+
+# 70. ERROS
+
+Nunca apenas:
+
+```text
+ERROR
+```
+
+Mostrar:
+
+```text
+"Você não possui energia suficiente."
+
+"Este slot está ocupado."
+
+"Esta criatura não pode atacar neste turno."
+
+"Não é seu turno."
+
+"Essa carta não está na sua mão."
+```
+
+---
+
+# 71. GAME LOG
+
+Sempre visível ou acessível.
+
+Exemplo:
+
+```text
+TURN 04
+
+P1 comprou 1 carta.
+
+P1 gerou 6 energia.
+
+P1 invocou Orc na Lane 3.
+
+Orc não pode atacar neste turno.
+
+P1 finalizou o turno.
+
+P2 iniciou o turno.
+```
+
+---
+
+# 72. SISTEMA DE EVENTOS
+
+O evento é a unidade de observabilidade.
+
+Exemplo:
+
+```text
+DICE_ROLLED
+
+actor = creature_001
+target = creature_009
+roll = 5
+modifier = +2
+damage = 7
+```
+
+---
+
+# 73. RNG
+
+A rolagem deverá acontecer no lado confiável:
+
+```text
+SERVER
+ ↓
+RNG
+ ↓
+D6
+ ↓
+EVENT
+```
+
+Nunca confiar no resultado enviado pelo cliente.
+
+---
+
+# 74. RECONSTRUÇÃO DE PARTIDA
+
+O sistema deverá ser capaz de responder:
+
+> "Como chegamos a este estado?"
+
+Usando:
+
+```text
+INITIAL STATE
++
+ACTIONS
++
+EVENTS
+=
+CURRENT STATE
+```
+
+Isso é extremamente importante para debugging.
+
+---
+
+# 75. MODO DEBUG
+
+Criar:
+
+```text
+/debug
+```
+
+ou feature flag.
+
+Ferramentas:
+
+```text
++ ENERGY
+
+DRAW CARD
+
+SPAWN CREATURE
+
+BUILD STRUCTURE
+
+DAMAGE HERO
+
+ROLL D6
+
+FORCE TURN
+
+KILL ENTITY
+
+WIN GAME
+
+RESET GAME
+```
+
+Não disponível para jogadores normais.
+
+---
+
+# 76. SIMULADOR
+
+Criar:
+
+```text
+scripts/simulate-game.ts
+```
+
+Objetivo:
+
+```text
+simular 100
+simular 1.000
+simular 10.000
+```
+
+partidas quando o engine estiver estável.
+
+---
+
+# 77. MÉTRICAS
+
+Registrar:
+
+### Partida
+
+* duração;
+* número de turnos;
+* vencedor;
+* motivo da vitória.
+
+### Economia
+
+* energia gerada;
+* energia gasta;
+* energia desperdiçada.
+
+### Combate
+
+* ataques;
+* média de d6;
+* dano total;
+* dano médio;
+* criaturas destruídas;
+* estruturas destruídas.
+
+### Herói
+
+* dano recebido;
+* número de defesas;
+* vida final.
+
+### Cartas
+
+* cartas compradas;
+* cartas jogadas;
+* cartas não utilizadas.
+
+---
+
+# 78. KPIs DO MVP
+
+Não usar métricas de negócio ainda.
+
+Usar métricas de **game design**.
+
+### KPI 1
+
+Percentual de partidas concluídas.
+
+### KPI 2
+
+Duração média.
+
+### KPI 3
+
+Turnos médios.
+
+### KPI 4
+
+Taxa de vitória por deck.
+
+### KPI 5
+
+Taxa de utilização das cartas.
+
+### KPI 6
+
+Taxa de destruição de estruturas.
+
+### KPI 7
+
+Dano médio por turno.
+
+### KPI 8
+
+Média de rolagem.
+
+---
+
+# 79. QUESTÕES DE DESIGN EM ABERTO
+
+Estas não devem ser escondidas.
+
+Criar:
+
+```text
+docs/open-questions.md
+```
+
+---
+
+## Q001
+
+Ataque é obrigatório?
+
+```text
+UNKNOWN
+```
+
+---
+
+## Q002
+
+Herói pode defender quantas vezes?
+
+```text
+UNKNOWN
+```
+
+---
+
+## Q003
+
+Como funciona exatamente o dano quando herói defende?
+
+```text
+UNKNOWN
+```
+
+---
+
+## Q004
+
+Energia não utilizada é perdida?
+
+```text
+PROVISIONAL: YES
+```
+
+---
+
+## Q005
+
+Compra quando já possui 5 cartas?
+
+```text
+UNKNOWN
+```
+
+---
+
+## Q006
+
+Buff pode ultrapassar 6?
+
+```text
+PROVISIONAL: YES
+```
+
+---
+
+## Q007
+
+Uma estrutura gera energia imediatamente ou somente no turno seguinte?
+
+```text
+UNKNOWN
+```
+
+---
+
+## Q008
+
+Estruturas possuem outros efeitos além de geração?
+
+```text
+SUPPORTED
+```
+
+---
+
+## Q009
+
+Magias canalizadas ocupam slot permanentemente até ativação?
+
+```text
+PROVISIONAL: YES
+```
+
+---
+
+## Q010
+
+Uma criatura pode receber múltiplos ataques no mesmo turno?
+
+```text
+DEPENDS ON COMBAT RULE
+```
+
+---
+
+# 80. CONFIGURAÇÃO DE REGRAS
+
+Tudo que for experimental deverá poder ser parametrizado.
+
+Exemplo:
+
+```text
+RULES_CONFIG
+
+mandatory_attack
+hero_defense_limit
+energy_carries_over
+max_hand_size
+draw_over_limit
+buff_max_damage
+structure_income_timing
+```
+
+Assim:
+
+```text
+RULE A
+```
+
+pode ser testada contra:
+
+```text
+RULE B
+```
+
+sem reescrever o sistema.
+
+---
+
+# 81. ESTRUTURA DO REPOSITÓRIO
+
+```text
+farel-virtual/
+│
+├── AGENTS.md
+├── README.md
+├── package.json
+├── .env.example
+│
+├── app/
+│
+├── components/
+│
+├── game/
+│   ├── engine/
+│   ├── rules/
+│   ├── actions/
+│   ├── validation/
+│   ├── combat/
+│   ├── cards/
+│   ├── state/
+│   ├── events/
+│   └── rng/
+│
+├── data/
+│
+├── lib/
+│   ├── api/
+│   ├── sheets/
+│   └── session/
+│
+├── types/
+│
+├── tests/
+│
+├── scripts/
+│
+├── docs/
+│
+└── apps-script/
+```
+
+---
+
+# 82. DOCUMENTAÇÃO
+
+```text
+docs/
+
+00-vision.md
+01-pdr-master.md
+02-ruleset.md
+03-open-questions.md
+04-game-loop.md
+05-game-state.md
+06-card-system.md
+07-action-system.md
+08-event-system.md
+09-architecture.md
+10-google-sheets-schema.md
+11-apps-script-api.md
+12-realtime.md
+13-ui-ux.md
+14-testing.md
+15-playtest.md
+16-balancing.md
+17-roadmap.md
+18-agi-workflow.md
+```
+
+---
+
+# 83. AGENTS.MD
+
+O AGY deverá receber regras rígidas.
+
+```text
+# FAREL VIRTUAL DEVELOPMENT RULES
+
+1. Never invent game rules.
+2. Never modify the Ruleset without explicit authorization.
+3. Game Engine is the source of truth.
+4. UI must never calculate authoritative game results.
+5. Client input is untrusted.
+6. Every game action must be validated.
+7. Every important state mutation must generate an event.
+8. Every new game rule must have tests.
+9. Keep data layer independent from game engine.
+10. Google Sheets is temporary infrastructure.
+11. Do not introduce unnecessary dependencies.
+12. Do not perform unrelated refactors.
+13. Work in small, isolated missions.
+14. Preserve existing tests.
+15. Never silently resolve an open game-design question.
+```
+
+---
+
+# 84. PIPELINE AGY
+
+O AGY não recebe:
+
+> "Construa o FAREL."
+
+Recebe:
+
+```text
+MISSÃO
+ ↓
+CONTEXTO
+ ↓
+ARQUIVOS
+ ↓
+OBJETIVO
+ ↓
+RESTRIÇÕES
+ ↓
+IMPLEMENTAÇÃO
+ ↓
+TESTES
+ ↓
+REVIEW
+```
+
+---
+
+# 85. FORMATO PADRÃO DE MISSÃO
+
+```text
+MISSION ID
+
+OBJETIVO
+
+CONTEXTO
+
+LER ANTES
+
+ARQUIVOS PERMITIDOS
+
+ARQUIVOS PROIBIDOS
+
+REGRAS
+
+IMPLEMENTAÇÃO
+
+CRITÉRIOS DE ACEITE
+
+TESTES OBRIGATÓRIOS
+
+NÃO FAZER
+
+RESULTADO ESPERADO
+```
+
+---
+
+# 86. ROADMAP DE IMPLEMENTAÇÃO
+
+## M0
+
+### Ruleset
+
+Formalizar regras.
+
+**Saída:**
+
+```text
+ruleset.md
+open-questions.md
+config
+```
+
+---
+
+## M1
+
+### Project Skeleton
+
+Criar:
+
+* Next.js;
+* TypeScript;
+* Tailwind;
+* estrutura;
+* testes;
+* Git.
+
+---
+
+## M2
+
+### Domain Model
+
+Implementar:
+
+```text
+Player
+Card
+Hero
+Creature
+Structure
+Spell
+Board
+GameState
+```
+
+---
+
+## M3
+
+### Game Engine
+
+Implementar:
+
+```text
+createGame
+startGame
+startTurn
+draw
+energy
+playCard
+endTurn
+```
+
+---
+
+## M4
+
+### Combat Engine
+
+Implementar:
+
+```text
+attack
+target selection
+d6
+modifier
+damage
+death
+victory
+```
+
+---
+
+## M5
+
+### Unit Tests
+
+Cobertura das regras fundamentais.
+
+---
+
+## M6
+
+### Local UI
+
+Criar tabuleiro jogável sem multiplayer.
+
+---
+
+## M7
+
+### Google Sheets
+
+Criar:
+
+```text
+CONFIG
+ROOMS
+GAMES
+PLAYER_STATE
+GAME_STATE
+PLAYER_CARDS
+CARDS
+DECKS
+DECK_CARDS
+HEROES
+ACTIONS
+EVENTS
+MATCHES
+PLAYTEST
+```
+
+---
+
+## M8
+
+### Apps Script API
+
+Implementar:
+
+```text
+createRoom
+joinRoom
+startGame
+getState
+submitAction
+getEvents
+finishGame
+```
+
+---
+
+## M9
+
+### Multiplayer
+
+Implementar polling.
+
+```text
+P1 ↔ Apps Script ↔ Sheets ↔ P2
+```
+
+---
+
+## M10
+
+### Full Match
+
+Partida completa:
+
+```text
+LOBBY
+↓
+SETUP
+↓
+GAME
+↓
+COMBAT
+↓
+VICTORY
+```
+
+---
+
+## M11
+
+### Telemetry
+
+Registrar eventos e métricas.
+
+---
+
+## M12
+
+### Playtest
+
+Primeiras partidas humanas.
+
+---
+
+## M13
+
+### Visual Polish
+
+Somente agora:
+
+* identidade FAREL;
+* cartas;
+* animações;
+* efeitos;
+* arte;
+* atmosfera.
+
+---
+
+# 87. CRITÉRIO DE "DONE"
+
+O MVP só será considerado pronto quando:
+
+```text
+[ ] P1 cria sala
+[ ] P2 entra
+[ ] sala possui código
+[ ] ambos entram na partida
+[ ] heróis são atribuídos
+[ ] decks são atribuídos
+[ ] mãos são criadas
+[ ] partida começa
+[ ] turno é controlado
+[ ] energia é gerada
+[ ] carta é comprada
+[ ] cartas podem ser jogadas
+[ ] criatura entra no slot
+[ ] estrutura entra no slot
+[ ] magia pode ser canalizada
+[ ] criatura não ataca quando não pode
+[ ] criatura pode atacar
+[ ] alvo é determinado
+[ ] d6 é rolado
+[ ] modificadores são aplicados
+[ ] dano é aplicado
+[ ] criaturas morrem
+[ ] estruturas morrem
+[ ] herói recebe dano
+[ ] herói pode defender
+[ ] herói pode morrer
+[ ] vencedor é detectado
+[ ] partida termina
+[ ] eventos são registrados
+[ ] dados de playtest são armazenados
+[ ] dois navegadores conseguem jogar sem intervenção manual
+```
+
+---
+
+# 88. TESTES AUTOMATIZADOS MÍNIMOS
+
+## Energia
+
+```text
+5 base
++ estrutura
+= valor esperado
+```
+
+## Compra
+
+```text
+5 cartas
+→ draw
+→ regra de limite
+```
+
+## Criatura
+
+```text
+summon
+→ cannot attack
+```
+
+## Ataque
+
+```text
+1d6
+→ damage
+```
+
+## Buff
+
+```text
+d6 + modifier
+```
+
+## Morte
+
+```text
+HP 5
+damage 5
+→ destroyed
+```
+
+## Estrutura
+
+```text
+destroy structure
+→ remove energy bonus
+```
+
+## Vitória
+
+```text
+hero HP = 0
+→ opponent wins
+```
+
+## Turno
+
+```text
+P1
+→ P2
+→ P1
+```
+
+---
+
+# 89. TESTES DE SEGURANÇA
+
+O sistema deve rejeitar:
+
+```text
+P1 tentando jogar carta de P2
+
+P1 tentando agir no turno de P2
+
+P1 tentando gastar energia inexistente
+
+P1 tentando atacar criatura inexistente
+
+P1 tentando usar carta que não possui
+
+P1 tentando ocupar slot ocupado
+
+P1 enviando resultado de d6 manualmente
+
+P1 tentando modificar HP diretamente
+```
+
+---
+
+# 90. TESTE MAIS IMPORTANTE
+
+Dois navegadores.
+
+```text
+CHROME
+P1
+     ↕
+GOOGLE APPS SCRIPT
+     ↕
+GOOGLE SHEETS
+     ↕
+EDGE
+P2
+```
+
+Executar:
+
+```text
+criar sala
+entrar
+iniciar
+comprar
+jogar carta
+atacar
+rolar
+receber dano
+matar criatura
+matar herói
+terminar
+```
+
+Sem editar a planilha manualmente.
+
+Se isso funcionar:
+
+> **FAREL VIRTUAL EXISTE.**
+
+---
+
+# 91. DEFINIÇÃO DO MVP EM UMA FRASE
+
+> **FAREL VIRTUAL MVP é uma mesa de FAREL digital, privada e 1×1, capaz de executar o Ruleset 1.1, registrar cada ação e fornecer dados suficientes para decidir como o jogo deve evoluir.**
+
+---
+
+# 92. O PIPELINE COMPLETO DO PROJETO
+
+```text
+                 ┌─────────────────┐
+                 │   FAREL TCG     │
+                 └────────┬────────┘
+                          │
+                          ▼
+                 ┌─────────────────┐
+                 │ GAME DESIGN     │
+                 │ Ruleset 1.1     │
+                 └────────┬────────┘
+                          │
+                          ▼
+                 ┌─────────────────┐
+                 │   PDR MASTER    │
+                 └────────┬────────┘
+                          │
+                          ▼
+                 ┌─────────────────┐
+                 │  GAME ENGINE    │
+                 └────────┬────────┘
+                          │
+                          ▼
+                 ┌─────────────────┐
+                 │     TESTES      │
+                 └────────┬────────┘
+                          │
+                          ▼
+                 ┌─────────────────┐
+                 │    FRONTEND     │
+                 └────────┬────────┘
+                          │
+                          ▼
+                 ┌─────────────────┐
+                 │ APPS SCRIPT API │
+                 └────────┬────────┘
+                          │
+                          ▼
+                 ┌─────────────────┐
+                 │ GOOGLE SHEETS   │
+                 └────────┬────────┘
+                          │
+                          ▼
+                    ┌───────────┐
+                    │ 1 × 1     │
+                    │ MULTIPLAYER│
+                    └─────┬─────┘
+                          │
+                          ▼
+                 ┌─────────────────┐
+                 │    EVENTS       │
+                 │    METRICS      │
+                 └────────┬────────┘
+                          │
+                          ▼
+                 ┌─────────────────┐
+                 │    PLAYTEST     │
+                 └────────┬────────┘
+                          │
+                          ▼
+                 ┌─────────────────┐
+                 │ BALANCE / RULES │
+                 └────────┬────────┘
+                          │
+                          └──────────────┐
+                                         ▼
+                                  RULESET 1.2
+                                         │
+                                         ▼
+                                  NOVO CICLO
+```
+
+---
+
+# 93. A REGRA DE OURO DO PROJETO
+
+Eu colocaria isso no topo do `README.md`:
+
+> ### **FAREL VIRTUAL NÃO EXISTE PARA PROVAR QUE O JOGO ESTÁ PRONTO.**
+>
+> ### **ELE EXISTE PARA DESCOBRIR SE O JOGO FUNCIONA.**
+
+Isso muda completamente a forma de desenvolver.
+
+Se uma partida revelar que a economia de energia é ruim, **ótimo**.
+
+Se descobrirmos que estruturas são inúteis, **ótimo**.
+
+Se o herói for impossível de matar, **ótimo**.
+
+Se o combate for chato, **ótimo**.
+
+O MVP terá cumprido sua função.
+
+---
+
+# 94. PRÓXIMA CAMADA: A LINHA DE PRODUÇÃO DO AGY
+
+Com este PDR como documento-mãe, o próximo artefato não deveria ser código.
+
+Deveríamos transformar tudo isso em um **AGY BUILD PLAN**, algo como:
+
+```text
+PHASE 00 — AUDIT
+PHASE 01 — PROJECT INIT
+PHASE 02 — DOMAIN TYPES
+PHASE 03 — RULE ENGINE
+PHASE 04 — COMBAT ENGINE
+PHASE 05 — TEST SUITE
+PHASE 06 — SHEETS DATABASE
+PHASE 07 — APPS SCRIPT
+PHASE 08 — API
+PHASE 09 — BOARD UI
+PHASE 10 — ROOM SYSTEM
+PHASE 11 — MULTIPLAYER
+PHASE 12 — TELEMETRY
+PHASE 13 — E2E
+PHASE 14 — PLAYTEST
+```
+
+E cada fase seria quebrada em **missões AGY pequenas e independentes**, com prompt, arquivos autorizados, critérios de aceite e testes.
+
+Esse é o próximo documento que eu faria, porque ele transforma este PDR de **arquitetura** em uma **linha de montagem executável pelo AGY CLI**.

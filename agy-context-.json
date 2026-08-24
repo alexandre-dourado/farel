@@ -1,0 +1,3 @@
+﻿{
+    "change_log":  "Implementado foundation, domain types, rules config, engine core (turn/energy/draw) e combat engine (Chunks 0 a 4). Adicionado REPORT_PARTIAL_MVP.md em docs/agy."
+}
