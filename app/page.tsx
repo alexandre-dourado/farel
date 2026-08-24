@@ -6,7 +6,7 @@ import { GameState } from '../types/gameState';
 import { HeroCard } from '../components/HeroCard';
 import { LaneComponent } from '../components/LaneComponent';
 import { CardComponent } from '../components/CardComponent';
-import { pollState, submitAction, createMatch } from '../lib/api';
+import { pollState, submitAction, createMatch, joinMatch } from '../lib/api';
 
 export default function Home() {
   const [inLobby, setInLobby] = useState(true);
@@ -15,6 +15,7 @@ export default function Home() {
   
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [error, setError] = useState<string>('');
+  const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
 
   // Polling
   useEffect(() => {
@@ -62,7 +63,6 @@ export default function Home() {
         // Partida encontrada
         const updatedState = { ...res.state };
         updatedState.players.p2.name = 'Bob (Joined)'; 
-        // Em um app real usaríamos `joined: true` se tipado.
         await joinMatch(matchId, updatedState);
         setInLobby(false);
       } else {
@@ -133,20 +133,32 @@ export default function Home() {
     }
   };
 
-  const handlePlayCard = async (cardInstanceId: string) => {
+  const handleCardClick = (cardInstanceId: string) => {
+    if (!isActive(playerId)) return;
+    if (selectedCardId === cardInstanceId) {
+      setSelectedCardId(null);
+    } else {
+      setSelectedCardId(cardInstanceId);
+    }
+  };
+
+  const handleLaneClick = async (laneIndex: number) => {
+    if (!selectedCardId) return;
     if (!isActive(playerId)) return;
     try {
       setError('');
-      const newState = playCard(gameState, playerId, cardInstanceId);
+      const newState = playCard(gameState, playerId, selectedCardId, laneIndex);
       await submitAction(matchId, newState);
+      setSelectedCardId(null);
     } catch (e: any) {
       setError(e.message);
+      setSelectedCardId(null); // reset selection on error
     }
   };
 
   return (
     <main className="flex min-h-screen flex-col items-center p-4 bg-gray-900 text-white font-sans">
-      <h1 className="text-2xl font-bold mb-4">Match: {matchId} | You are {myPlayer.name} ({playerId})</h1>
+      <h1 className="text-2xl font-bold mb-4">Match: {matchId} | You are {myPlayer.hero.name} ({playerId})</h1>
       
       {error && <div className="bg-red-500 text-white p-2 rounded mb-4">{error}</div>}
       
@@ -168,7 +180,9 @@ export default function Home() {
 
       <div className="flex gap-4 p-4 border-2 border-slate-700 rounded-lg bg-slate-800">
         {gameState.board.lanes.map((lane, idx) => (
-          <LaneComponent key={idx} lane={lane} isP1Bottom={playerId === 'p1'} />
+          <div key={idx} onClick={() => handleLaneClick(idx)} className={selectedCardId ? "cursor-pointer hover:ring-2 ring-blue-500 rounded-lg" : ""}>
+             <LaneComponent lane={lane} isP1Bottom={playerId === 'p1'} />
+          </div>
         ))}
       </div>
 
@@ -189,15 +203,16 @@ export default function Home() {
         
         <div className="flex items-end gap-2 overflow-x-auto p-4">
           {myPlayer.hand.map((card) => (
-            <CardComponent 
+            <div 
               key={card.instanceId} 
-              card={card} 
-              onClick={() => handlePlayCard(card.instanceId)}
-            />
+              className={selectedCardId === card.instanceId ? "ring-4 ring-yellow-400 rounded-lg scale-110 transition-all cursor-pointer" : "transition-all cursor-pointer"} 
+              onClick={() => handleCardClick(card.instanceId)}
+            >
+              <CardComponent card={card} />
+            </div>
           ))}
         </div>
       </div>
     </main>
   );
 }
-

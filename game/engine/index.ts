@@ -11,8 +11,8 @@ export function createGame(gameId: string, players: Player[], config: RulesConfi
     playersState[p.id] = {
       playerId: p.id,
       hero: {
-        id: `hero_${p.id}`,
-        name: `Hero ${p.name || p.id}`,
+        id: "hero_" + p.id,
+        name: "Hero " + (p.name || p.id),
         maxHealth: 20,
         health: 20,
         baseEnergy: config.base_energy
@@ -57,15 +57,18 @@ export function createGame(gameId: string, players: Player[], config: RulesConfi
 }
 
 export function startGame(state: GameState, config: RulesConfig = DEFAULT_RULES_CONFIG): GameState {
-  const newState = { ...state, status: GameStatus.PLAYING, turn: 1, phase: TurnPhase.START };
+  const newState = structuredClone(state);
+  newState.status = GameStatus.PLAYING;
+  newState.turn = 1;
+  newState.phase = TurnPhase.START;
   
   Object.keys(newState.players).forEach(playerId => {
     const hand: Card[] = [];
     for(let i = 0; i < config.starting_hand; i++) {
        hand.push({
-         id: `card_${playerId}_${i}`,
-         instanceId: `inst_${playerId}_${i}`,
-         name: `Card ${i}`,
+         id: "card_" + playerId + "_"  + i,
+         instanceId: "inst_" + playerId + "_"  + i,
+         name: "Card " + i,
          type: CardType.CREATURE,
          description: 'A mock card',
          energyCost: 1
@@ -110,7 +113,18 @@ export const EnergyEngine = {
 };
 
 export function startTurn(state: GameState, playerId: string, config: RulesConfig = DEFAULT_RULES_CONFIG): GameState {
-  let newState = { ...state, activePlayerId: playerId, phase: TurnPhase.START };
+  let newState = structuredClone(state);
+  newState.activePlayerId = playerId;
+  newState.phase = TurnPhase.START;
+  
+  // PROBLEMA 3: Resetar EXHAUSTED para READY
+  const isP1 = playerId === Object.keys(newState.players)[0];
+  newState.board.lanes.forEach(lane => {
+      const creature = isP1 ? lane.p1Creature : lane.p2Creature;
+      if (creature && creature.status === EntityStatus.EXHAUSTED) {
+          creature.status = EntityStatus.READY;
+      }
+  });
   
   newState.logs.push({
     type: EventType.TURN_STARTED,
@@ -135,9 +149,9 @@ export function draw(state: GameState, playerId: string, amount: number, config:
   
   for(let i=0; i<amount; i++) {
     player.hand.push({
-      id: `drawn_${Date.now()}_${i}`,
-      instanceId: `drawn_inst_${Date.now()}_${i}`,
-      name: `Drawn Card`,
+      id: "drawn_" + Date.now() + "_"  + i,
+      instanceId: "drawn_inst_" + Date.now() + "_"  + i,
+      name: 'Drawn Card',
       type: CardType.CREATURE,
       description: 'A drawn mock card',
       energyCost: 1
@@ -154,7 +168,11 @@ export function draw(state: GameState, playerId: string, amount: number, config:
   return newState;
 }
 
-export function playCard(state: GameState, playerId: string, cardInstanceId: string, config: RulesConfig = DEFAULT_RULES_CONFIG): GameState {
+export function playCard(state: GameState, playerId: string, cardInstanceId: string, laneIndex?: number, config: RulesConfig = DEFAULT_RULES_CONFIG): GameState {
+  if (playerId !== state.activePlayerId) {
+      throw new Error("Não é o seu turno");
+  }
+  
   const newState = structuredClone(state);
   const player = newState.players[playerId];
   const cardIndex = player.hand.findIndex(c => c.instanceId === cardInstanceId);
@@ -169,30 +187,38 @@ export function playCard(state: GameState, playerId: string, cardInstanceId: str
     throw new Error("Not enough energy");
   }
   
-  player.currentEnergy -= card.energyCost;
-  player.hand.splice(cardIndex, 1);
-  
   if (card.type === CardType.CREATURE) {
-     const lane = newState.board.lanes.find(l => (playerId === Object.keys(newState.players)[0] ? !l.p1Creature : !l.p2Creature));
-     if (lane) {
-         const creature = {
-             id: `c_${card.id}`,
-             instanceId: card.instanceId,
-             cardId: card.id,
-             name: card.name,
-             status: EntityStatus.SUMMONED,
-             maxHealth: 10,
-             health: 10,
-             attackModifier: 0,
-             summonedOnTurn: newState.turn,
-             canAttackOnEntry: card.canAttackOnEntry
-         };
-         if (playerId === Object.keys(newState.players)[0]) {
-             lane.p1Creature = creature;
-         } else {
-             lane.p2Creature = creature;
-         }
-     }
+      if (laneIndex === undefined) {
+          throw new Error("É necessário escolher uma lane para invocar uma criatura");
+      }
+      const lane = newState.board.lanes[laneIndex];
+      if (!lane) throw new Error("Lane inválida");
+      
+      const isP1 = playerId === Object.keys(newState.players)[0];
+      if (isP1 && lane.p1Creature) throw new Error("Sua posição nesta lane já está ocupada");
+      if (!isP1 && lane.p2Creature) throw new Error("Sua posição nesta lane já está ocupada");
+      
+      player.currentEnergy -= card.energyCost;
+      player.hand.splice(cardIndex, 1);
+      
+      const creature = {
+          id: "c_" + card.id,
+          instanceId: card.instanceId,
+          cardId: card.id,
+          name: card.name,
+          status: EntityStatus.SUMMONED,
+          maxHealth: 10,
+          health: 10,
+          attackModifier: 0,
+          summonedOnTurn: newState.turn,
+          canAttackOnEntry: card.canAttackOnEntry
+      };
+      
+      if (isP1) lane.p1Creature = creature;
+      else lane.p2Creature = creature;
+  } else {
+      player.currentEnergy -= card.energyCost;
+      player.hand.splice(cardIndex, 1);
   }
 
   newState.logs.push({
@@ -206,7 +232,8 @@ export function playCard(state: GameState, playerId: string, cardInstanceId: str
 }
 
 export function endTurn(state: GameState, playerId: string, config: RulesConfig = DEFAULT_RULES_CONFIG): GameState {
-  const newState = { ...state, phase: TurnPhase.END };
+  const newState = structuredClone(state);
+  newState.phase = TurnPhase.END;
   const player = newState.players[playerId];
   
   if (player.hand.length > config.max_hand) {

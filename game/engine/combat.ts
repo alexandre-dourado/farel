@@ -1,4 +1,4 @@
-﻿import { GameState, EventLog } from '../../types/gameState';
+import { GameState, EventLog } from '../../types/gameState';
 import { GameStatus, EventType, EntityStatus } from '../../types/enums';
 import { RulesConfig, DEFAULT_RULES_CONFIG } from '../config/RulesConfig';
 import { Creature, Structure, Hero } from '../../types/entities';
@@ -14,6 +14,9 @@ export function resolveAttack(
   
   const lane = newState.board.lanes[laneIndex];
   if (!lane) throw new Error("Invalid lane");
+  if (attackerId !== state.activePlayerId) {
+      throw new Error("Não é o seu turno");
+  }
   
   const isP1 = attackerId === Object.keys(newState.players)[0];
   const attacker: Creature | null = isP1 ? lane.p1Creature : lane.p2Creature;
@@ -24,6 +27,10 @@ export function resolveAttack(
   
   if (attacker.summonedOnTurn === newState.turn && !attacker.canAttackOnEntry) {
     throw new Error("Summoning sickness");
+  }
+  
+  if (attacker.status === EntityStatus.EXHAUSTED) {
+    throw new Error("Criatura já atacou neste turno");
   }
   
   const defenderId = Object.keys(newState.players).find(id => id !== attackerId) || '';
@@ -147,6 +154,8 @@ export function resolveAttack(
       } as EventLog);
     }
   }
+  
+  attacker.status = EntityStatus.EXHAUSTED;
   
   return newState;
 }
