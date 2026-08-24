@@ -8,6 +8,9 @@ export interface Card {
   description: string;
   energyCost: number;
   canAttackOnEntry?: boolean;
+  health?: number;
+  attackModifier?: number;
+  energyBonus?: number;
 }
 
 export interface Player {

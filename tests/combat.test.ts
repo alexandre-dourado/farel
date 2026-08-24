@@ -59,9 +59,11 @@ describe('Combat Engine', () => {
     state.players[p2Id].hero.health = 5;
     
     vi.spyOn(Math, 'random').mockReturnValue(0.8); // roll 5
-    const newState = resolveAttack(state, p1Id, 0, true);
+    const newState = resolveAttack(state, p1Id, 0);
     // damage = 5 + 2 = 7. final damage = 7. hero health = 5 - 7 = -2
     expect(newState.players[p2Id].hero.health).toBeLessThanOrEqual(0);
     expect(newState.status).toBe(GameStatus.FINISHED);
   });
 });
+
+

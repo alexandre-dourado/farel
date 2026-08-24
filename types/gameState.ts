@@ -14,7 +14,7 @@ export interface PlayerState {
   playerId: string;
   hero: Hero;
   hand: Card[];
-  deckCount: number;
+  deck: Card[];
   graveyard: Card[];
   currentEnergy: number;
   maxEnergyCap: number;

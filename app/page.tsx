@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useEffect, useState } from 'react';
 import { createGame, startGame, startTurn, endTurn, playCard, setHeroDefenseMode } from '../game/engine';
@@ -7,6 +7,7 @@ import { HeroCard } from '../components/HeroCard';
 import { LaneComponent } from '../components/LaneComponent';
 import { CardComponent } from '../components/CardComponent';
 import { pollState, submitAction, createMatch, joinMatch } from '../lib/api';
+import { CardType } from '../types/enums';
 
 export default function Home() {
   const [inLobby, setInLobby] = useState(true);
@@ -133,8 +134,25 @@ export default function Home() {
     }
   };
 
-  const handleCardClick = (cardInstanceId: string) => {
+  const handleCardClick = async (cardInstanceId: string) => {
     if (!isActive(playerId)) return;
+    
+    const card = myPlayer.hand.find(c => c.instanceId === cardInstanceId);
+    if (!card) return;
+
+    if (card.type === CardType.SPELL) {
+        // Feitiço não precisa de lane, joga direto
+        try {
+            setError('');
+            const newState = playCard(gameState, playerId, cardInstanceId);
+            await submitAction(matchId, newState);
+            setSelectedCardId(null);
+        } catch (e: any) {
+            setError(e.message);
+        }
+        return;
+    }
+
     if (selectedCardId === cardInstanceId) {
       setSelectedCardId(null);
     } else {
@@ -142,12 +160,12 @@ export default function Home() {
     }
   };
 
-  const handleLaneClick = async (laneIndex: number) => {
+  const handleSlotClick = async (slotIndex: number) => {
     if (!selectedCardId) return;
     if (!isActive(playerId)) return;
     try {
       setError('');
-      const newState = playCard(gameState, playerId, selectedCardId, laneIndex);
+      const newState = playCard(gameState, playerId, selectedCardId, slotIndex);
       await submitAction(matchId, newState);
       setSelectedCardId(null);
     } catch (e: any) {
@@ -163,12 +181,23 @@ export default function Home() {
       {error && <div className="bg-red-500 text-white p-2 rounded mb-4">{error}</div>}
       
       <div className="flex justify-between w-full max-w-6xl mb-4">
-        <div className="flex flex-col gap-2">
-          <HeroCard hero={enemyPlayer.hero} currentEnergy={enemyPlayer.currentEnergy} maxEnergyCap={enemyPlayer.maxEnergyCap} />
-          <div className="text-sm text-gray-400">Deck: {enemyPlayer.deckCount} | Grave: {enemyPlayer.graveyard.length}</div>
-          <div className="text-sm font-bold text-yellow-500">{isActive(enemyPlayerId) ? '⚔ ACTIVE TURN' : ''}</div>
-          <div className="text-xs px-2 py-1 bg-slate-800 rounded w-fit border border-slate-600">
-            Defesa do Herói: <span className="text-white font-bold">{enemyPlayer.heroDefenseMode === 'ALWAYS' ? 'ALWAYS' : 'AUTO'}</span>
+        <div className="flex gap-4">
+          <div className="flex flex-col gap-2">
+            <HeroCard hero={enemyPlayer.hero} currentEnergy={enemyPlayer.currentEnergy} maxEnergyCap={enemyPlayer.maxEnergyCap} />
+            <div className="text-sm text-gray-400">Deck: {enemyPlayer.deck.length} | Grave: {enemyPlayer.graveyard.length}</div>
+            <div className="text-sm font-bold text-yellow-500">{isActive(enemyPlayerId) ? '⚔ ACTIVE TURN' : ''}</div>
+            <div className="text-xs px-2 py-1 bg-slate-800 rounded w-fit border border-slate-600">
+              Defesa do Herói: <span className="text-white font-bold">{enemyPlayer.heroDefenseMode === 'ALWAYS' ? 'ALWAYS' : 'AUTO'}</span>
+            </div>
+          </div>
+          
+          {/* Enemy Backline */}
+          <div className="flex gap-2 p-2 bg-slate-800 rounded border border-slate-700 h-fit">
+             {gameState.board.backline[enemyPlayerId].structures.map((s, idx) => (
+                <div key={idx} className="w-16 h-16 bg-slate-700 border border-slate-600 flex flex-col items-center justify-center text-xs text-center p-1">
+                   {s ? <div><b className="text-[10px]">{s.name}</b><br/><span className="text-green-400">+{s.energyBonus} E</span></div> : 'Backline'}
+                </div>
+             ))}
           </div>
         </div>
         
@@ -183,35 +212,46 @@ export default function Home() {
 
       <div className="flex gap-4 p-4 border-2 border-slate-700 rounded-lg bg-slate-800">
         {gameState.board.lanes.map((lane, idx) => (
-          <div key={idx} onClick={() => handleLaneClick(idx)} className={selectedCardId ? "cursor-pointer hover:ring-2 ring-blue-500 rounded-lg" : ""}>
+          <div key={idx} onClick={() => handleSlotClick(idx)} className={selectedCardId ? "cursor-pointer hover:ring-2 ring-blue-500 rounded-lg" : ""}>
              <LaneComponent lane={lane} isP1Bottom={playerId === 'p1'} />
           </div>
         ))}
       </div>
 
       <div className="flex justify-between w-full max-w-6xl mt-4">
-        <div className="flex flex-col gap-2">
-          <HeroCard hero={myPlayer.hero} currentEnergy={myPlayer.currentEnergy} maxEnergyCap={myPlayer.maxEnergyCap} />
-          <div className="text-sm text-gray-400">Deck: {myPlayer.deckCount} | Grave: {myPlayer.graveyard.length}</div>
-          <div className="text-sm font-bold text-yellow-500">{isActive(playerId) ? '⚔ YOUR TURN' : ''}</div>
+        <div className="flex gap-4">
+          <div className="flex flex-col gap-2">
+            <HeroCard hero={myPlayer.hero} currentEnergy={myPlayer.currentEnergy} maxEnergyCap={myPlayer.maxEnergyCap} />
+            <div className="text-sm text-gray-400">Deck: {myPlayer.deck.length} | Grave: {myPlayer.graveyard.length}</div>
+            <div className="text-sm font-bold text-yellow-500">{isActive(playerId) ? '⚔ YOUR TURN' : ''}</div>
+            
+            <label className="flex items-center gap-2 mt-2 bg-slate-800 p-2 rounded w-fit border border-slate-600 cursor-pointer">
+               <input type="checkbox" checked={myPlayer.heroDefenseMode === 'ALWAYS'} onChange={async (e) => {
+                   const newMode = e.target.checked ? 'ALWAYS' : 'AUTO';
+                   const newState = setHeroDefenseMode(gameState, playerId, newMode);
+                   await submitAction(matchId, newState);
+               }} />
+               <span className="text-sm">Herói Defende (ALWAYS)</span>
+            </label>
+            
+            {isActive(playerId) && (
+              <button 
+                onClick={handleEndTurn}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2"
+              >
+                End Turn
+              </button>
+            )}
+          </div>
           
-          <label className="flex items-center gap-2 mt-2 bg-slate-800 p-2 rounded w-fit border border-slate-600">
-             <input type="checkbox" checked={myPlayer.heroDefenseMode === 'ALWAYS'} onChange={async (e) => {
-                 const newMode = e.target.checked ? 'ALWAYS' : 'AUTO';
-                 const newState = setHeroDefenseMode(gameState, playerId, newMode);
-                 await submitAction(matchId, newState);
-             }} />
-             <span className="text-sm">Herói Defende (ALWAYS)</span>
-          </label>
-          
-          {isActive(playerId) && (
-            <button 
-              onClick={handleEndTurn}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2"
-            >
-              End Turn
-            </button>
-          )}
+          {/* My Backline */}
+          <div className="flex gap-2 p-2 bg-slate-800 rounded border border-slate-700 h-fit">
+             {gameState.board.backline[playerId].structures.map((s, idx) => (
+                <div key={idx} onClick={() => handleSlotClick(idx)} className={w-16 h-16 bg-slate-700 border border-slate-600 flex flex-col items-center justify-center text-xs text-center p-1 }>
+                   {s ? <div><b className="text-[10px]">{s.name}</b><br/><span className="text-green-400">+{s.energyBonus} E</span></div> : 'Backline'}
+                </div>
+             ))}
+          </div>
         </div>
         
         <div className="flex items-end gap-2 overflow-x-auto p-4">

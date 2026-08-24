@@ -1,0 +1,145 @@
+Você é um Engenheiro de Software Sênior orquestrando a Fase 2 do "Farel Virtual MVP".
+A infraestrutura base (Engine puro com structuredClone, validação de turno,
+EXHAUSTED, defesa do herói via heroDefenseMode) está pronta e estável — não
+mexer nisso. Sua missão agora é dar "vida" ao jogo: banco de cartas real,
+deck/embaralhamento, e Feitiços/Estruturas jogáveis de verdade.
+
+Execute as Missões abaixo SEQUENCIALMENTE, rodando `npx vitest` e `npx tsc
+--noEmit` após CADA chunk. Use subagentes se precisar de foco, mas nenhum
+subagente decide regra de jogo por conta própria — se algo não estiver
+especificado abaixo, pare e pergunte, não invente (é a mesma regra de ouro
+de sempre: nada de repetir o episódio do `armor`/`baseDefense`).
+
+---
+
+### MISSION 10 — REAL CARD DATABASE
+**Objetivo:** Eliminar as cartas mockadas e criar um registro canônico.
+
+1. Criar `game/data/CardRegistry.ts`, exportando `CardRegistry: Card[]` com
+   pelo menos 15 cartas:
+   - 10 Criaturas, custo de energia variando de 1 a 4, cada uma com
+     `health`, `attackModifier` e `canAttackOnEntry` próprios (não deixar
+     tudo igual — é o ponto inteiro desta missão).
+   - 3 Estruturas, cada uma com `energyBonus` próprio.
+   - 2 Feitiços (`type: SPELL`), sem efeito mecânico ainda — apenas registro.
+2. Estender `types/entities.ts`:
+   - `Card`: adicionar `health?: number`, `attackModifier?: number`
+     (para cartas de criatura) e `energyBonus?: number` (para cartas de
+     estrutura).
+3. **Corrigir `playCard` em `game/engine/index.ts`:** hoje a criatura
+   nasce sempre com `maxHealth: 10, health: 10, attackModifier: 0`
+   fixos no código, ignorando a carta de origem. Trocar para usar
+   `card.health` e `card.attackModifier` (com fallback para 10 e 0
+   apenas se a carta não tiver o campo, por segurança).
+
+**Aceite:** `npx tsc --noEmit` limpo; as 15 cartas existem com valores
+diferentes entre si; uma criatura invocada em campo reflete a vida e o
+attackModifier da carta que a originou (não mais 10/0 fixos).
+
+---
+
+### MISSION 11 — DECKBUILDER & SHUFFLING
+
+1. Adicionar `deck: Card[]` a `PlayerState` (`types/gameState.ts`).
+   Remover o campo solto `deckCount` — a contagem passa a ser sempre
+   `player.deck.length`, derivada, para não haver dois números que podem
+   dessincronizar.
+2. Em `createGame` (ou `startGame`, o que fizer mais sentido no fluxo
+   atual): cada jogador recebe uma cópia completa do `CardRegistry`
+   (cópias com `instanceId` único por cópia, não a mesma referência),
+   embaralhada com Fisher-Yates. A mão inicial (`starting_hand`) é
+   distribuída puxando do topo desse deck já embaralhado — não mais
+   gerada do nada.
+3. Reescrever `draw()`: remover a fabricação de "Drawn Card" mock.
+   `draw()` agora faz `pop()` no `deck` do jogador e `push()` na `hand`.
+4. **Regra de fadiga (fixa, não deixar em aberto):** se `deck.length ===
+   0` no momento da compra, o jogador NÃO recebe carta e o Herói sofre
+   exatamente **1 de dano direto**, sem escalonamento, sem crescer a
+   cada compra vazia subsequente. Registrar em log
+   (`EventType.HERO_DAMAGED`, `value: 1`).
+
+**Aceite:** partida nova tem baralhos embaralhados e diferentes de
+jogo para jogo (testar duas partidas seguidas e comparar a ordem);
+`draw()` reduz `deck.length`; baralho vazio aplica exatamente 1 de dano
+ao Herói por tentativa de compra, sem criar carta nenhuma.
+
+---
+
+### MISSION 12 — SPELLS & STRUCTURES ENGINE
+
+No `playCard` (`game/engine/index.ts`), os ramos `STRUCTURE` e `SPELL`
+hoje caem no `else` genérico que só deduz energia e descarta a carta —
+nenhuma estrutura é colocada, nenhum feitiço é registrado. Substituir:
+
+1. **Se `card.type === CardType.STRUCTURE`:**
+   - Exigir um `slotIndex` (mesmo parâmetro `laneIndex` já usado para
+     criaturas, reaproveitar o nome ou renomear para algo genérico tipo
+     `targetIndex` — decisão de nomenclatura livre, mas use um nome só).
+   - **Atenção ao formato real do dado:** `board.backline` é
+     `Record<playerId, BacklineState>` — ou seja, indexado pelo
+     `playerId` diretamente, DIFERENTE das lanes de criatura que usam
+     `p1Creature`/`p2Creature`. Acessar via
+     `newState.board.backline[playerId].structures[slotIndex]`.
+   - **Validar ANTES de deduzir energia ou remover da mão** (mesma regra
+     que já vale para criaturas desde a correção anterior): se o slot
+     não existir ou já estiver ocupado, `throw new Error(...)` sem tocar
+     em energia nem em mão.
+   - Só após validar: deduzir energia, remover da mão, instanciar a
+     Structure (`energyBonus` vindo da carta) no slot.
+   - Log: `EventType.STRUCTURE_BUILT`.
+2. **Se `card.type === CardType.SPELL`:**
+   - Deduzir energia, mover a carta para `graveyard`, registrar log
+     `EventType.SPELL_CHANNELLED` (é o valor que já existe no enum —
+     não criar um `SPELL_CAST` novo). Nenhum efeito de jogo além disso
+     por enquanto — resolução complexa de feitiço fica para a Fase 3.
+3. Atualizar `app/page.tsx`: quando a carta selecionada for Estrutura,
+   permitir clicar num slot de Backline (visualmente separado dos slots
+   de criatura) para confirmar o posicionamento.
+
+**Aceite:** jogar uma Estrutura com todos os slots de backline ocupados
+lança erro e não consome energia nem carta (mesmo teste que já existe
+para criaturas, agora replicado para estruturas); estrutura construída
+aumenta a energia gerada no próximo `startTurn` do dono (via
+`EnergyEngine.generateEnergy`, que já lê `energyBonus` — só falta ter
+estruturas de verdade em campo para isso valer); feitiço jogado é
+descartado e logado, sem crashar nada.
+
+---
+
+### MISSION 13 — UI DECK PREVIEW
+
+1. Exibir no painel do jogador (`HeroCard` ou similar em `app/page.tsx`)
+   a contagem real: `player.deck.length` (não mais `deckCount`).
+2. Atualizar `tests/integration.test.ts`: comprovar que o deck diminui a
+   cada `draw`, que baralho vazio aplica o dano de fadiga fixo (1) sem
+   criar carta, e que Estruturas ocupam e liberam corretamente os slots
+   de `backline`.
+
+**Aceite:** suíte completa (`npx vitest`) passa 100%; UI mostra número
+de cartas restantes no baralho de cada jogador.
+
+---
+
+## DO_NOT
+
+```text
+- Não inventar stats, mecânicas ou nomes de EventType que não existem
+  hoje no enums.ts sem primeiro checar se já existe algo equivalente.
+- Não deixar nenhuma regra "a definir" para o subagent decidir sozinho
+  (ex: valor de fadiga já está fixado acima em 1, não é negociável
+  nesta missão).
+- Não mexer em startGame/startTurn/endTurn/resolveAttack/EXHAUSTED/
+  heroDefenseMode além do estritamente necessário para ligar o deck
+  real — essa parte já está estável e testada.
+```
+
+## OUTPUT ESPERADO
+
+Trabalhe de forma autônoma. Reporte um sumário de conclusão em
+`docs/agy/FIX_10_13_REPORT.md` apenas quando a MISSION 13 estiver
+passando 100% nos testes, ou levante a mão (pare e pergunte) se
+encontrar um bloqueio arquitetural crítico ou uma regra de jogo que o
+`pdr.txt` não cobre.
+
+Lembre-se da regra de ouro: *Jamais mute o estado original, sempre
+`structuredClone(state)`.*
