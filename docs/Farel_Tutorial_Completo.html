@@ -1,0 +1,297 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farel Virtual MVP - Master Tutorial</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #0f172a; color: #e2e8f0; font-family: 'Inter', sans-serif; }
+        pre { background: #1e293b !important; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; border: 1px solid #334155; }
+        code { color: #38bdf8; font-family: monospace; }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header -->
+    <header class="bg-gray-900 border-b border-gray-800 sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-4 py-6 flex flex-col md:flex-row justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">FAREL VIRTUAL MVP</h1>
+                <p class="text-sm text-gray-400 mt-1">Manual de Arquitetura e Regras Oficiais</p>
+            </div>
+            <nav class="mt-4 md:mt-0 flex space-x-6 text-sm font-medium">
+                <a href="#part1" class="text-gray-300 hover:text-indigo-400 transition">Regras e Dinâmica</a>
+                <a href="#part2" class="text-gray-300 hover:text-indigo-400 transition">Arquitetura UI/API</a>
+                <a href="#part3" class="text-gray-300 hover:text-indigo-400 transition">Motor de Jogo</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-5xl mx-auto px-4 py-12 space-y-24">
+        
+        <section id="part1" class="scroll-mt-24 space-y-8">
+            <div class="border-b border-gray-700 pb-4">
+                <h2 class="text-4xl font-bold text-white tracking-tight">Parte 1: O Jogo Farel</h2>
+                <p class="text-indigo-400 mt-2">Fundamentos de Design, Lore e Tabuleiro.</p>
+            </div>
+            <div class="max-w-4xl mx-auto p-8 text-gray-200 bg-gray-900 rounded-xl shadow-2xl space-y-8 font-sans">
+    
+    <!-- Header -->
+    <header class="text-center border-b border-purple-500/30 pb-6">
+        <h1 class="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-500 mb-4 tracking-tight">
+            Farel: O InÃ­cio da Jornada
+        </h1>
+        <p class="text-xl text-gray-400 italic">Domine a arena, controle as lanes e esmague a base inimiga.</p>
+    </header>
+
+    <!-- Lore -->
+    <section class="bg-gray-800/50 p-6 rounded-lg border border-gray-700 hover:border-purple-500/50 transition-colors">
+        <h2 class="text-3xl font-bold text-purple-400 mb-4 flex items-center gap-2">
+            <span class="text-4xl">ðŸŒŒ</span> A Lore de Farel
+        </h2>
+        <p class="text-lg leading-relaxed text-gray-300">
+            Em um multiverso despedaÃ§ado, as energias de mundos colididos formaram a <strong class="text-purple-300">Arena de Farel</strong>. 
+            VocÃª Ã© um Conjurador, invocando HerÃ³is lendÃ¡rios, Tropas leais e Estruturas mÃ­sticas para dominar o campo de batalha. 
+            Neste duelo Ã©pico, apenas a mente mais brilhante e o exÃ©rcito mais implacÃ¡vel prevalecerÃ£o. O destino de reinos inteiros estÃ¡ em suas mÃ£os!
+        </p>
+    </section>
+
+    <!-- Dynamics -->
+    <section class="bg-gray-800/50 p-6 rounded-lg border border-gray-700 hover:border-blue-500/50 transition-colors">
+        <h2 class="text-3xl font-bold text-blue-400 mb-4 flex items-center gap-2">
+            <span class="text-4xl">âš”ï¸</span> DinÃ¢mica da Partida
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+            <div class="bg-gray-900 p-4 rounded-md border border-gray-700">
+                <h3 class="text-xl font-bold text-gray-100 mb-2">Turnos & Compra</h3>
+                <p class="text-gray-400">O jogo flui em turnos alternados. No inÃ­cio de cada turno, vocÃª saca uma carta, expandindo seu arsenal. Use seus recursos com sabedoria para conjurar suas forÃ§as.</p>
+            </div>
+            <div class="bg-gray-900 p-4 rounded-md border border-gray-700">
+                <h3 class="text-xl font-bold text-gray-100 mb-2">Fase de Combate</h3>
+                <p class="text-gray-400">ApÃ³s posicionar suas tropas, o combate se desenrola! Unidades frente a frente se atacam. Se nÃ£o houver defensores, o dano vai direto para a Base inimiga.</p>
+            </div>
+            <div class="bg-gray-900 p-4 rounded-md border border-gray-700 md:col-span-2">
+                <h3 class="text-xl font-bold text-gray-100 mb-2">Limite de MÃ£o</h3>
+                <p class="text-gray-400">Um Conjurador precisa de foco! Se vocÃª acumular mais de <strong>10 cartas</strong> na mÃ£o, deverÃ¡ descartar o excesso ao fim do turno. Mantenha sua estratÃ©gia afiada e nÃ£o desperdice suas forÃ§as.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Board & Lanes -->
+    <section class="bg-gray-800/50 p-6 rounded-lg border border-gray-700 hover:border-green-500/50 transition-colors">
+        <h2 class="text-3xl font-bold text-green-400 mb-4 flex items-center gap-2">
+            <span class="text-4xl">ðŸ—ºï¸</span> O Tabuleiro
+        </h2>
+        <p class="text-lg text-gray-300 mb-6">
+            O campo de batalha Ã© o seu domÃ­nio. Conhecer cada centÃ­metro da arena Ã© crucial para a vitÃ³ria.
+        </p>
+        <ul class="space-y-4">
+            <li class="flex items-start gap-3">
+                <div class="mt-1 bg-green-500/20 p-2 rounded text-green-400">ðŸ›¡ï¸</div>
+                <div>
+                    <h4 class="text-xl font-semibold text-gray-200">As 5 Lanes</h4>
+                    <p class="text-gray-400">O embate principal ocorre em 5 corredores (Lanes). Cada Lane comporta uma unidade atacante de cada lado. Posicionamento Ã© tudo: proteja as lanes frÃ¡geis e ataque onde o inimigo estiver vulnerÃ¡vel!</p>
+                </div>
+            </li>
+            <li class="flex items-start gap-3">
+                <div class="mt-1 bg-green-500/20 p-2 rounded text-green-400">ðŸ°</div>
+                <div>
+                    <h4 class="text-xl font-semibold text-gray-200">Backlines de Estruturas</h4>
+                    <p class="text-gray-400">AtrÃ¡s das Lanes de combate, encontram-se as Backlines. Aqui vocÃª ergue Estruturas de suporte ou geradores de recursos que fortalecem seu exÃ©rcito sem entrarem diretamente no choque fÃ­sico da vanguarda.</p>
+                </div>
+            </li>
+        </ul>
+    </section>
+
+    <!-- Heroes & Rules -->
+    <section class="bg-gradient-to-br from-gray-800/80 to-purple-900/40 p-6 rounded-lg border border-purple-500/30">
+        <h2 class="text-3xl font-bold text-yellow-400 mb-4 flex items-center gap-2">
+            <span class="text-4xl">ðŸ‘‘</span> HerÃ³is & Wildcards de Defesa
+        </h2>
+        <p class="text-lg text-gray-300 mb-4">
+            No coraÃ§Ã£o do seu exÃ©rcito estÃ£o os <strong>HerÃ³is</strong>. Eles nÃ£o sÃ£o meras tropas; sÃ£o lendas vivas com habilidades avassaladoras que podem virar o jogo em um instante.
+        </p>
+        <div class="bg-black/30 p-5 rounded border-l-4 border-yellow-500">
+            <h4 class="text-xl font-bold text-yellow-300 mb-2">Wildcard de Defesa</h4>
+            <p class="text-gray-300">
+                Os HerÃ³is possuem um papel fundamental: o <strong>Wildcard de Defesa</strong>. Eles podem ser movidos livremente (de acordo com suas mecÃ¢nicas) para bloquear ataques mortais, protegendo sua Base ou salvando uma Estrutura vital no Ãºltimo segundo. 
+            </p>
+        </div>
+    </section>
+
+    <!-- Footer / Rules Summary -->
+    <footer class="mt-8 pt-6 border-t border-gray-700 text-center">
+        <h3 class="text-2xl font-bold text-gray-200 mb-4">Regra de Ouro</h3>
+        <p class="text-xl text-red-400 font-bold uppercase tracking-widest">Destrua a Base inimiga antes que destruam a sua!</p>
+    </footer>
+
+</div>
+
+        </section>
+
+        <section id="part2" class="scroll-mt-24 space-y-8">
+            <div class="border-b border-gray-700 pb-4">
+                <h2 class="text-4xl font-bold text-white tracking-tight">Parte 2: Arquitetura em Nuvem</h2>
+                <p class="text-purple-400 mt-2">Dumb Clients React e o Motor Polling do Google Apps Script.</p>
+            </div>
+            <div class="bg-gray-900 text-gray-100 p-8 rounded-xl space-y-8 font-sans shadow-2xl">
+  
+  <div class="border-b border-gray-700 pb-4">
+    <h1 class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
+      Parte 2: Arquitetura de UI e Backend
+    </h1>
+    <p class="text-gray-400 mt-2 text-lg">
+      Descubra como o Farel Virtual MVP conecta uma UI React "burra" a um banco de dados em planilha usando Google Apps Script.
+    </p>
+  </div>
+
+  <section class="space-y-4">
+    <h2 class="text-2xl font-bold text-blue-300 flex items-center">
+      <span class="mr-2">ðŸ“º</span> O Client "Burro": React + Tailwind
+    </h2>
+    <p class="text-gray-300 leading-relaxed">
+      A nossa interface foi projetada para ser completamente <strong>stateless</strong> (sem estado complexo local). Ela tem apenas duas responsabilidades:
+      <ol class="list-decimal list-inside mt-2 space-y-1 text-gray-400 ml-4">
+        <li><strong>Renderizar o Estado:</strong> Pega o JSON mais recente do servidor e atualiza a tela usando Tailwind CSS para uma estilizaÃ§Ã£o rÃ¡pida e responsiva.</li>
+        <li><strong>Enviar AÃ§Ãµes:</strong> Quando o jogador interage (ex: comprar uma empresa), o cliente envia a requisiÃ§Ã£o (POST) e espera a validaÃ§Ã£o do servidor.</li>
+      </ol>
+    </p>
+  </section>
+
+  <section class="space-y-4 bg-gray-800 p-6 rounded-lg border border-gray-700">
+    <h2 class="text-2xl font-bold text-green-300 flex items-center">
+      <span class="mr-2">ðŸ”„</span> Multiplayer via Polling
+    </h2>
+    <p class="text-gray-300 leading-relaxed">
+      Para manter todos os jogadores sincronizados sem a complexidade (e custo) de WebSockets, adotamos uma estratÃ©gia de <strong>Short Polling</strong>. A cada 3 segundos, o cliente React pergunta ao servidor: <em>"Tem alguma novidade?"</em>.
+    </p>
+    <div class="mt-4">
+      <p class="text-sm text-gray-400 mb-2 font-mono">Exemplo do Hook React (Polling):</p>
+      <pre class="bg-gray-950 p-4 rounded-md overflow-x-auto border border-gray-800">
+<code class="text-sm text-blue-200">useEffect(() => {
+  const pollState = async () => {
+    try {
+      const res = await fetch(SCRIPT_URL);
+      const data = await res.json();
+      setGameState(data);
+    } catch (error) {
+      console.error("Erro no polling:", error);
+    }
+  };
+
+  // Executa a cada 3 segundos
+  const intervalId = setInterval(pollState, 3000);
+  
+  // Limpa o intervalo ao desmontar
+  return () => clearInterval(intervalId);
+}, []);</code></pre>
+    </div>
+  </section>
+
+  <section class="space-y-4">
+    <h2 class="text-2xl font-bold text-yellow-300 flex items-center">
+      <span class="mr-2">â˜ï¸</span> Backend Relay: Google Apps Script (GAS)
+    </h2>
+    <p class="text-gray-300 leading-relaxed">
+      No coraÃ§Ã£o da nossa persistÃªncia, usamos o Google Sheets como um "banco de dados" e o Google Apps Script (<code>Code.gs</code>) como nossa API Relay. O script processa <code>doGet</code> para retornar o estado atual e <code>doPost</code> para processar as aÃ§Ãµes dos jogadores de forma atÃ´mica.
+    </p>
+    <div class="mt-4">
+      <p class="text-sm text-gray-400 mb-2 font-mono">Exemplo do endpoint POST em Code.gs:</p>
+      <pre class="bg-gray-950 p-4 rounded-md overflow-x-auto border border-gray-800">
+<code class="text-sm text-yellow-200">function doPost(e) {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  
+  // 1. Faz parse da aÃ§Ã£o do jogador
+  const action = JSON.parse(e.postData.contents);
+  
+  // 2. Processa a lÃ³gica do jogo (ValidaÃ§Ã£o e MutaÃ§Ã£o)
+  const currentState = JSON.parse(sheet.getRange('A1').getValue() || "{}");
+  const newState = GameEngine.processAction(currentState, action);
+  
+  // 3. Salva o novo estado na cÃ©lula
+  sheet.getRange('A1').setValue(JSON.stringify(newState));
+  
+  // 4. Retorna confirmaÃ§Ã£o para o cliente
+  return ContentService.createTextOutput(JSON.stringify({ success: true }))
+    .setMimeType(ContentService.MimeType.JSON);
+}</code></pre>
+    </div>
+  </section>
+
+  <div class="bg-blue-900/30 border-l-4 border-blue-500 p-4 rounded-r-lg mt-8">
+    <p class="text-blue-200 text-sm italic">
+      <strong>Resumo do Arquiteto:</strong> Esta arquitetura Serverless (GAS) + Stateless UI (React) + Polling permite iterar rapidamente na lÃ³gica do jogo ("Game Engine") sem se preocupar com infraestrutura pesada de servidores ou bancos de dados relacionais. Perfeito para um MVP Ã¡gil!
+    </p>
+  </div>
+
+</div>
+
+        </section>
+
+        <section id="part3" class="scroll-mt-24 space-y-8">
+            <div class="border-b border-gray-700 pb-4">
+                <h2 class="text-4xl font-bold text-white tracking-tight">Parte 3: O Core Engine</h2>
+                <p class="text-blue-400 mt-2">TypeScript, Imutabilidade Severa e Máquinas de Estado.</p>
+            </div>
+            <div class="bg-gray-900 text-gray-100 p-8 rounded-xl shadow-2xl font-sans max-w-4xl mx-auto border border-gray-700">
+  <section class="mb-10">
+    <h2 class="text-3xl font-extrabold text-blue-400 mb-4 tracking-tight border-b border-gray-700 pb-2">Part 3: Core Game Engine (TypeScript)</h2>
+    <p class="text-gray-300 leading-relaxed mb-6">
+      Bem-vindo ao coraÃ§Ã£o do Farel Virtual MVP! Aqui nÃ³s abandonamos os side-effects e abraÃ§amos o funcional. A mÃ¡quina de estados do nosso engine, localizada em <code class="bg-gray-800 text-pink-400 px-1 py-0.5 rounded text-sm font-mono">game/engine</code>, Ã© completamente isolada. Isso significa zero acoplamento com a UI. O motor processa aÃ§Ãµes e retorna um estado novo, fresco e clonado.
+    </p>
+  </section>
+
+  <section class="mb-10">
+    <h3 class="text-2xl font-bold text-green-400 mb-4">Imutabilidade Profunda</h3>
+    <p class="text-gray-300 leading-relaxed mb-4">
+      NÃ³s levamos a imutabilidade a sÃ©rio. Cada transiÃ§Ã£o de estado utiliza a API nativa <code class="bg-gray-800 text-pink-400 px-1 py-0.5 rounded text-sm font-mono">structuredClone</code> para garantir que o estado anterior nÃ£o seja modificado. Isso previne bugs assombrosos e facilita a implementaÃ§Ã£o de features como "desfazer" ou replays.
+    </p>
+    <div class="bg-gray-950 p-4 rounded-lg overflow-x-auto border border-gray-800 mb-6">
+<pre><code class="text-sm font-mono text-gray-300"><span class="text-purple-400">export function</span> <span class="text-blue-300">applyAction</span>(state: GameState, action: GameAction): GameState {
+  <span class="text-gray-500">// O sagrado clone profundo</span>
+  <span class="text-purple-400">const</span> nextState = <span class="text-blue-200">structuredClone</span>(state);
+
+  <span class="text-purple-400">switch</span> (action.type) {
+    <span class="text-purple-400">case</span> <span class="text-green-300">'PLAY_CARD'</span>:
+      <span class="text-purple-400">return</span> <span class="text-blue-300">playCard</span>(nextState, action.payload);
+    <span class="text-purple-400">case</span> <span class="text-green-300">'RESOLVE_ATTACK'</span>:
+      <span class="text-purple-400">return</span> <span class="text-blue-300">resolveAttack</span>(nextState, action.payload);
+    <span class="text-gray-500">// ...</span>
+    <span class="text-purple-400">default</span>:
+      <span class="text-purple-400">return</span> nextState;
+  }
+}</code></pre>
+    </div>
+  </section>
+
+  <section class="mb-10">
+    <h3 class="text-2xl font-bold text-yellow-400 mb-4">Fases e TransiÃ§Ãµes</h3>
+    <p class="text-gray-300 leading-relaxed mb-4">
+      O loop principal Ã© dividido em fases bem definidas. Quando chamamos <code class="bg-gray-800 text-pink-400 px-1 py-0.5 rounded text-sm font-mono">startTurn</code>, o engine reseta o mana, compra uma carta e lida com condiÃ§Ãµes de manutenÃ§Ã£o. O fluxo de <code class="bg-gray-800 text-pink-400 px-1 py-0.5 rounded text-sm font-mono">playCard</code> e <code class="bg-gray-800 text-pink-400 px-1 py-0.5 rounded text-sm font-mono">resolveAttack</code> verifica todas as regras de validaÃ§Ã£o (recursos suficientes, alvos vÃ¡lidos) antes de mutar o clone e retornÃ¡-lo.
+    </p>
+  </section>
+
+  <section>
+    <h3 class="text-2xl font-bold text-red-400 mb-4">Edge-Cases: Summoning Sickness & 1d6 Damage</h3>
+    <p class="text-gray-300 leading-relaxed mb-4">
+      Regras de negÃ³cio complexas? Temos! Criaturas recÃ©m-invocadas sofrem de <strong>Summoning Sickness</strong> (enjoo de invocaÃ§Ã£o) â€” uma flag que Ã© limpa na prÃ³xima fase de <code class="bg-gray-800 text-pink-400 px-1 py-0.5 rounded text-sm font-mono">startTurn</code> do controlador.
+    </p>
+    <p class="text-gray-300 leading-relaxed">
+      E quanto ao dano, nÃ³s temos mecÃ¢nicas baseadas em rolagem de dados (1d6). O motor permite injetar uma <em>seed</em> ou um resolvedor RNG customizado, mantendo a engine determinÃ­stica para os testes unitÃ¡rios, mas caÃ³tica e divertida durante o gameplay real. Dano ilimitado? SÃ³ se os dados permitirem (exploding dice)!
+    </p>
+  </section>
+</div>
+
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 border-t border-gray-800 py-8 text-center text-gray-500 text-sm mt-12">
+        <p>Gerado automaticamente pela Antigravity AI Engine &bull; Arquitetura FAREL MVP &bull; 2026</p>
+    </footer>
+
+</body>
+</html>
