@@ -18,6 +18,7 @@ export interface PlayerState {
   graveyard: Card[];
   currentEnergy: number;
   maxEnergyCap: number;
+  heroDefenseMode?: 'ALWAYS' | 'AUTO';
 }
 
 export interface GameState {

@@ -1,5 +1,5 @@
 ﻿import { describe, it, expect } from 'vitest';
-import { createGame, startGame, startTurn, playCard, endTurn, resolveAttack } from '../game/engine';
+import { createGame, startGame, startTurn, playCard, endTurn, resolveAttack, setHeroDefenseMode } from '../game/engine';
 import { DEFAULT_RULES_CONFIG } from '../game/config/RulesConfig';
 import { EntityStatus } from '../types/enums';
 
@@ -29,7 +29,7 @@ describe('Game Engine Integration', () => {
 
     // Verify summoning sickness
     expect(() => {
-      resolveAttack(state, 'p1', 0, false, DEFAULT_RULES_CONFIG);
+      resolveAttack(state, 'p1', 0, DEFAULT_RULES_CONFIG);
     }).toThrow('Summoning sickness');
 
     state = endTurn(state, 'p1', DEFAULT_RULES_CONFIG);
@@ -46,12 +46,12 @@ describe('Game Engine Integration', () => {
     const originalRandom = Math.random;
     Math.random = () => 0.99; // max damage 6
     
-    state = resolveAttack(state, 'p1', 0, false, DEFAULT_RULES_CONFIG);
+    state = resolveAttack(state, 'p1', 0, DEFAULT_RULES_CONFIG);
     expect(state.board.lanes[0].p2Creature!.health).toBe(4);
     
     // Verify exhaustion
     expect(() => {
-      resolveAttack(state, 'p1', 0, false, DEFAULT_RULES_CONFIG);
+      resolveAttack(state, 'p1', 0, DEFAULT_RULES_CONFIG);
     }).toThrow('Criatura já atacou neste turno');
     
     Math.random = originalRandom;
@@ -106,4 +106,44 @@ describe('Game Engine Integration', () => {
       playCard(state, 'p1', c2.instanceId, 0);
     }).toThrow('Sua posição nesta lane já está ocupada');
   });
+  it('Proves Rota B Hero Defense (Problema 5)', () => {
+    let state = createGame('g', [{ id: 'p1' }, { id: 'p2' }]);
+    state = startGame(state);
+    
+    // Set up a creature for P2 to be attacked
+    state = startTurn(state, 'p2');
+    const p2Card = state.players['p2'].hand[0];
+    state = playCard(state, 'p2', p2Card.instanceId, 0);
+    state = endTurn(state, 'p2');
+    
+    state = startTurn(state, 'p1');
+    const p1Card = state.players['p1'].hand[0];
+    state = playCard(state, 'p1', p1Card.instanceId, 0); // P1 plays in same lane
+    state = endTurn(state, 'p1');
+    
+    state = startTurn(state, 'p2');
+    state = endTurn(state, 'p2'); // P2 does nothing
+    
+    state = startTurn(state, 'p1');
+    // Now P1 can attack P2's creature
+    const originalRandom = Math.random;
+    Math.random = () => 0.99; // deals 6 damage
+    
+    // P2 sets heroDefenseMode = 'ALWAYS'
+    
+    state = setHeroDefenseMode(state, 'p2', 'ALWAYS');
+    
+    const heroHealthBefore = state.players['p2'].hero.health;
+    const creatureHealthBefore = state.board.lanes[0].p2Creature!.health;
+    
+    state = resolveAttack(state, 'p1', 0);
+    
+    // Hero should take damage, creature should not
+    expect(state.players['p2'].hero.health).toBe(heroHealthBefore - 6);
+    expect(state.board.lanes[0].p2Creature!.health).toBe(creatureHealthBefore);
+    
+    Math.random = originalRandom;
+  });
+
 });
+

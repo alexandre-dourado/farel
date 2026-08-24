@@ -7,7 +7,6 @@ export function resolveAttack(
   state: GameState,
   attackerId: string,
   laneIndex: number,
-  defendWithHero: boolean = false,
   config: RulesConfig = DEFAULT_RULES_CONFIG
 ): GameState {
   const newState = structuredClone(state);
@@ -40,7 +39,8 @@ export function resolveAttack(
   let targetEntity: Creature | Structure | Hero | null = null;
   let targetIndex = -1;
   
-  if (defendWithHero) {
+  // ROTA B: O próprio defensor decide se o herói pula na frente
+  if (enemyPlayer.heroDefenseMode === 'ALWAYS') {
     targetType = 'HERO';
     targetEntity = enemyPlayer.hero;
   } else {

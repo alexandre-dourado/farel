@@ -1,6 +1,6 @@
 ﻿# FIX 09 REPORT: CRITICAL ENGINE FIXES
 
-**Status:** ⚠️ PARCIALMENTE RESOLVIDO (Aguardando Decisão)
+**Status:** ✅ 100% RESOLVIDO
 
 ## Resumo das Correções Críticas Implementadas
 
@@ -26,5 +26,5 @@ O Herói deveria proteger a board (Wildcard Defense) por escolha de quem *defend
 - **ROTA A (Purista):** Ataque fica "Pendente" no estado. Defensor reage via UI no turno do inimigo escolhendo se defende com o herói ou não. O dano é finalmente processado. *(Complexo em Polling, risco de lentidão massiva na UX).*
 - **ROTA B (Pragmática MVP):** O Defensor pré-configura uma chave ("Herói Bloqueia Tudo", "Herói Ignora Tudo") no seu lado da tela. O ataque do inimigo varre o lado do defensor respeitando essa regra automatizada. *(Simples e imediato)*.
 
-> [!IMPORTANT]
-> **OPEN QUESTION para Alexandre:** Como quer seguir com a Defesa do Herói? (ROTA A ou ROTA B)?
+> ✅ **Decisão Recebida (Rota B):** O jogador agora escolhe através de um Switch na sua UI se o Herói vai defender tudo (ALWAYS) ou obedecer à hierarquia (AUTO). O estado do inimigo é lido automaticamente na hora de resolver ataques, sem pausas e sem depender da escolha arbitrária do Atacante.
+

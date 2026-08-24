@@ -1,4 +1,4 @@
-﻿import { GameState, PlayerState, EventLog } from '../../types/gameState';
+import { GameState, PlayerState, EventLog } from '../../types/gameState';
 import { GameStatus, TurnPhase, EventType, CardType, EntityStatus } from '../../types/enums';
 import { Card, Hero, Player, Structure } from '../../types/entities';
 import { Board, LaneState, BacklineState } from '../../types/board';
@@ -21,7 +21,8 @@ export function createGame(gameId: string, players: Player[], config: RulesConfi
       deckCount: 0,
       graveyard: [],
       currentEnergy: 0,
-      maxEnergyCap: config.base_energy
+      maxEnergyCap: config.base_energy,
+      heroDefenseMode: 'AUTO'
     };
   });
 
@@ -260,3 +261,8 @@ export function endTurn(state: GameState, playerId: string, config: RulesConfig 
   return newState;
 }
 export * from './combat';
+export function setHeroDefenseMode(state: GameState, playerId: string, mode: 'ALWAYS' | 'AUTO'): GameState {
+  const newState = structuredClone(state);
+  newState.players[playerId].heroDefenseMode = mode;
+  return newState;
+}

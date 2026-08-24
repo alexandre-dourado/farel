@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { createGame, startGame, startTurn, endTurn, playCard } from '../game/engine';
+import { createGame, startGame, startTurn, endTurn, playCard, setHeroDefenseMode } from '../game/engine';
 import { GameState } from '../types/gameState';
 import { HeroCard } from '../components/HeroCard';
 import { LaneComponent } from '../components/LaneComponent';
@@ -167,6 +167,9 @@ export default function Home() {
           <HeroCard hero={enemyPlayer.hero} currentEnergy={enemyPlayer.currentEnergy} maxEnergyCap={enemyPlayer.maxEnergyCap} />
           <div className="text-sm text-gray-400">Deck: {enemyPlayer.deckCount} | Grave: {enemyPlayer.graveyard.length}</div>
           <div className="text-sm font-bold text-yellow-500">{isActive(enemyPlayerId) ? '⚔ ACTIVE TURN' : ''}</div>
+          <div className="text-xs px-2 py-1 bg-slate-800 rounded w-fit border border-slate-600">
+            Defesa do Herói: <span className="text-white font-bold">{enemyPlayer.heroDefenseMode === 'ALWAYS' ? 'ALWAYS' : 'AUTO'}</span>
+          </div>
         </div>
         
         <div className="flex items-center gap-2">
@@ -191,6 +194,16 @@ export default function Home() {
           <HeroCard hero={myPlayer.hero} currentEnergy={myPlayer.currentEnergy} maxEnergyCap={myPlayer.maxEnergyCap} />
           <div className="text-sm text-gray-400">Deck: {myPlayer.deckCount} | Grave: {myPlayer.graveyard.length}</div>
           <div className="text-sm font-bold text-yellow-500">{isActive(playerId) ? '⚔ YOUR TURN' : ''}</div>
+          
+          <label className="flex items-center gap-2 mt-2 bg-slate-800 p-2 rounded w-fit border border-slate-600">
+             <input type="checkbox" checked={myPlayer.heroDefenseMode === 'ALWAYS'} onChange={async (e) => {
+                 const newMode = e.target.checked ? 'ALWAYS' : 'AUTO';
+                 const newState = setHeroDefenseMode(gameState, playerId, newMode);
+                 await submitAction(matchId, newState);
+             }} />
+             <span className="text-sm">Herói Defende (ALWAYS)</span>
+          </label>
+          
           {isActive(playerId) && (
             <button 
               onClick={handleEndTurn}
