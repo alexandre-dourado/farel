@@ -15,7 +15,6 @@ export function createGame(gameId: string, players: Player[], config: RulesConfi
         name: `Hero ${p.name || p.id}`,
         maxHealth: 20,
         health: 20,
-        baseDefense: 0,
         baseEnergy: config.base_energy
       },
       hand: [],
@@ -80,7 +79,7 @@ export function startGame(state: GameState, config: RulesConfig = DEFAULT_RULES_
 
 export const EnergyEngine = {
   generateEnergy(state: GameState, playerId: string, config: RulesConfig = DEFAULT_RULES_CONFIG): GameState {
-    const newState = { ...state };
+    const newState = structuredClone(state);
     const player = newState.players[playerId];
     
     const structures = newState.board.backline[playerId]?.structures || [];
@@ -131,7 +130,7 @@ export function startTurn(state: GameState, playerId: string, config: RulesConfi
 }
 
 export function draw(state: GameState, playerId: string, amount: number, config: RulesConfig = DEFAULT_RULES_CONFIG): GameState {
-  const newState = { ...state };
+  const newState = structuredClone(state);
   const player = newState.players[playerId];
   
   for(let i=0; i<amount; i++) {
@@ -156,7 +155,7 @@ export function draw(state: GameState, playerId: string, amount: number, config:
 }
 
 export function playCard(state: GameState, playerId: string, cardInstanceId: string, config: RulesConfig = DEFAULT_RULES_CONFIG): GameState {
-  const newState = { ...state };
+  const newState = structuredClone(state);
   const player = newState.players[playerId];
   const cardIndex = player.hand.findIndex(c => c.instanceId === cardInstanceId);
   
@@ -184,8 +183,9 @@ export function playCard(state: GameState, playerId: string, cardInstanceId: str
              status: EntityStatus.SUMMONED,
              maxHealth: 10,
              health: 10,
-             armor: 0,
-             attackModifier: 0
+             attackModifier: 0,
+             summonedOnTurn: newState.turn,
+             canAttackOnEntry: card.canAttackOnEntry
          };
          if (playerId === Object.keys(newState.players)[0]) {
              lane.p1Creature = creature;

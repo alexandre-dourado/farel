@@ -22,8 +22,9 @@ describe('Combat Engine', () => {
       status: EntityStatus.SUMMONED,
       maxHealth: 10,
       health: 10,
-      armor: 0,
-      attackModifier: 2
+            attackModifier: 2,
+      summonedOnTurn: 0,
+      canAttackOnEntry: true
     };
   });
 
@@ -36,15 +37,15 @@ describe('Combat Engine', () => {
       status: EntityStatus.SUMMONED,
       maxHealth: 10,
       health: 10,
-      armor: 1,
-      attackModifier: 0
+            attackModifier: 0,
+      summonedOnTurn: 0
     };
 
     vi.spyOn(Math, 'random').mockReturnValue(0.5); // roll 4
     
     const newState = resolveAttack(state, p1Id, 0);
-    // damage = 4 + 2 = 6. armor = 1. final = 5
-    expect(newState.board.lanes[0].p2Creature?.health).toBe(5);
+    // damage = 4 + 2 = 6. no armor. final = 6
+    expect(newState.board.lanes[0].p2Creature?.health).toBe(4);
   });
 
   it('should target hero if lane is empty and no structure', () => {

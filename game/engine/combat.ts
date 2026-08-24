@@ -10,7 +10,7 @@ export function resolveAttack(
   defendWithHero: boolean = false,
   config: RulesConfig = DEFAULT_RULES_CONFIG
 ): GameState {
-  const newState = { ...state };
+  const newState = structuredClone(state);
   
   const lane = newState.board.lanes[laneIndex];
   if (!lane) throw new Error("Invalid lane");
@@ -20,6 +20,10 @@ export function resolveAttack(
   
   if (!attacker) {
     throw new Error("No attacker in lane");
+  }
+  
+  if (attacker.summonedOnTurn === newState.turn && !attacker.canAttackOnEntry) {
+    throw new Error("Summoning sickness");
   }
   
   const defenderId = Object.keys(newState.players).find(id => id !== attackerId) || '';
@@ -68,7 +72,7 @@ export function resolveAttack(
   let finalDamage = damage;
   
   if (targetType === 'HERO') {
-    finalDamage = Math.max(0, damage - enemyPlayer.hero.baseDefense);
+    finalDamage = damage;
     enemyPlayer.hero.health -= finalDamage;
     newState.logs.push({
       type: EventType.HERO_DAMAGED,
@@ -117,7 +121,7 @@ export function resolveAttack(
     }
   } else if (targetType === 'CREATURE') {
     const c = targetEntity as Creature;
-    finalDamage = Math.max(0, damage - (c.armor || 0));
+    finalDamage = damage;
     c.health -= finalDamage;
     
     newState.logs.push({

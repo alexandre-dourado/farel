@@ -37,4 +37,32 @@ describe('Game Engine Core', () => {
     state = endTurn(state, 'p1', DEFAULT_RULES_CONFIG);
     expect(state.players['p1'].hand.length).toBe(DEFAULT_RULES_CONFIG.max_hand);
   });
+
+  it('should not mutate the original state when startTurn is called (structuredClone check)', () => {
+    state = startGame(state, DEFAULT_RULES_CONFIG);
+    const originalState = state;
+    const newState = startTurn(state, 'p1', DEFAULT_RULES_CONFIG);
+    expect(newState).not.toBe(originalState);
+    expect(newState.board).not.toBe(originalState.board);
+    expect(newState.players['p1']).not.toBe(originalState.players['p1']);
+  });
+
+  it('should change status to READY when startTurn is called for creatures without summoning sickness', () => {
+    state = startGame(state, DEFAULT_RULES_CONFIG);
+    state.turn = 2; // Make it turn 2
+    state.board.lanes[0].p1Creature = {
+        id: 'c1',
+        instanceId: 'i1',
+        cardId: 'card1',
+        name: 'Sickness Creature',
+        status: 1, // SUMMONED
+        maxHealth: 10,
+        health: 10,
+        attackModifier: 0,
+        summonedOnTurn: 1 // Summoned last turn
+    } as any;
+    
+    const newState = startTurn(state, 'p1', DEFAULT_RULES_CONFIG);
+    expect(newState.board.lanes[0].p1Creature?.status).toBe(2); // READY
+  });
 });

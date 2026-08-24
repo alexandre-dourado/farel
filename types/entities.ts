@@ -21,7 +21,6 @@ export interface Hero {
   name: string;
   maxHealth: number;
   health: number;
-  baseDefense: number;
   baseEnergy: number;
 }
 
@@ -33,8 +32,9 @@ export interface Creature {
   status: EntityStatus;
   maxHealth: number;
   health: number;
-  armor: number;
   attackModifier: number;
+  summonedOnTurn: number;
+  canAttackOnEntry?: boolean;
 }
 
 export interface Structure {
