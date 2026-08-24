@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useEffect, useState } from 'react';
 import { createGame, startGame, startTurn, endTurn, playCard } from '../game/engine';
@@ -23,7 +23,7 @@ export default function Home() {
     const poll = async () => {
       try {
         const res = await pollState(matchId);
-        if (res && res.status === 'success' && res.state) {
+        if (res && res.success === true && res.state) {
           setGameState(res.state);
         }
       } catch (err: any) {
