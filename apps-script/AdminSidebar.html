@@ -1,0 +1,73 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      function loadMatches() {
+        document.getElementById('matchList').innerHTML = '<p class="text-gray-400 text-sm">Carregando...</p>';
+        google.script.run.withSuccessHandler(renderMatches).getActiveMatches();
+      }
+
+      function renderMatches(matches) {
+        const list = document.getElementById('matchList');
+        list.innerHTML = '';
+        if(matches.length === 0) {
+          list.innerHTML = '<p class="text-gray-500 text-sm italic">Nenhuma partida ativa.</p>';
+          return;
+        }
+        matches.forEach(m => {
+          const div = document.createElement('div');
+          div.className = 'p-2 bg-gray-800 rounded border border-gray-700 text-xs';
+          div.innerHTML = '<div class="font-bold text-indigo-400">' + m.id + '</div><div class="text-gray-400 mt-1">' + new Date(m.updated).toLocaleString() + '</div>';
+          list.appendChild(div);
+        });
+      }
+
+      function clearMatches() {
+        if(confirm('Tem certeza que deseja apagar todas as partidas?')) {
+          google.script.run.withSuccessHandler(() => {
+            loadMatches();
+            alert('Partidas apagadas!');
+          }).clearAllMatches();
+        }
+      }
+
+      function runSetup() {
+        google.script.run.withSuccessHandler(() => {
+          alert('Setup concluído! A planilha foi formatada.');
+          loadMatches();
+        }).setupConfig();
+      }
+
+      window.onload = loadMatches;
+    </script>
+  </head>
+  <body class="bg-gray-900 text-gray-200 p-4 font-sans h-screen flex flex-col">
+    
+    <div class="mb-6">
+      <h1 class="text-xl font-bold text-white mb-1">Farel Admin</h1>
+      <p class="text-xs text-gray-400">Gerenciador de Partidas MVP</p>
+    </div>
+
+    <div class="space-y-3 mb-6">
+      <button onclick="runSetup()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded text-sm transition">
+        🪄 Rodar Setup Inicial
+      </button>
+      <button onclick="clearMatches()" class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded text-sm transition">
+        🗑️ Limpar Todas as Partidas
+      </button>
+      <button onclick="loadMatches()" class="w-full bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded text-sm transition">
+        🔄 Atualizar Lista
+      </button>
+    </div>
+
+    <div class="flex-grow flex flex-col min-h-0">
+      <h2 class="text-sm font-semibold text-gray-300 mb-2 uppercase tracking-wider">Partidas Ativas</h2>
+      <div id="matchList" class="space-y-2 overflow-y-auto pr-2 pb-4">
+        <p class="text-gray-400 text-sm">Carregando...</p>
+      </div>
+    </div>
+    
+  </body>
+</html>

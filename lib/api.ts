@@ -1,6 +1,6 @@
-﻿// lib/api.ts
+// lib/api.ts
 
-const API_URL = "SUA_URL_DO_GAS_AQUI"; // Replace with your Google Apps Script web app URL
+const API_URL = "https://script.google.com/macros/s/AKfycbw0NY2b2c-w_3wPXV0kjPG5IDvoDezvaOhnHYSyTZu1CBfm6kFXpDoQ0DPSzHYCU-gk/exec"; // Replace with your Google Apps Script web app URL
 
 export async function createMatch(matchId: string, initialState: any) {
   const response = await fetch(API_URL, {
