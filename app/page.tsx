@@ -54,8 +54,23 @@ export default function Home() {
     }
   };
 
-  const handleJoinMatch = () => {
-    setInLobby(false);
+  const handleJoinMatch = async () => {
+    try {
+      setError('');
+      const res = await pollState(matchId);
+      if (res && res.success === true && res.state) {
+        // Partida encontrada
+        const updatedState = { ...res.state };
+        updatedState.players.p2.name = 'Bob (Joined)'; 
+        // Em um app real usaríamos `joined: true` se tipado.
+        await joinMatch(matchId, updatedState);
+        setInLobby(false);
+      } else {
+        setError('Partida não encontrada!');
+      }
+    } catch (e: any) {
+      setError('Erro de rede: ' + e.message);
+    }
   };
 
   if (inLobby) {
