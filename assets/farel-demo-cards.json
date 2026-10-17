@@ -1,0 +1,340 @@
+{
+  "libraryId": "farel-demo-set-001",
+  "libraryName": "Biblioteca de demonstração FAREL",
+  "version": "0.1.0-prototype",
+  "status": "illustrative-not-official",
+  "cards": [
+    {
+      "id": "HERO-001",
+      "name": "Viajante do Limiar",
+      "type": "hero",
+      "energyCost": 0,
+      "life": 12,
+      "rulesText": "Seu elo com o mundo mortal. Se sua vida chegar a zero, você perde a partida.",
+      "keywords": [
+        "Herói",
+        "Elo mortal"
+      ],
+      "canAttackOnSummon": null,
+      "incomePerTurn": null,
+      "effectKind": "hero_core_rule",
+      "trigger": null,
+      "artDirection": "silhueta de viajante sob um arco luminoso; medalhão circular dourado; poucos detalhes",
+      "demoOnly": true,
+      "demoNotes": "Vida 12 escolhida apenas para exemplos visuais; valor oficial não informado.",
+      "artUrl": "/assets/farel/illustrations/HERO-001.webp"
+    },
+    {
+      "id": "HERO-002",
+      "name": "Imperatriz das Eras",
+      "type": "hero",
+      "energyCost": 0,
+      "life": 14,
+      "rulesText": "Seu elo com o mundo mortal. Se sua vida chegar a zero, você perde a partida.",
+      "keywords": [
+        "Herói",
+        "Elo mortal"
+      ],
+      "canAttackOnSummon": null,
+      "incomePerTurn": null,
+      "effectKind": "hero_core_rule",
+      "trigger": null,
+      "artDirection": "silhueta régia com coroa geométrica e anéis temporais; dourado fosco e azul-escuro",
+      "demoOnly": true,
+      "demoNotes": "Vida 14 escolhida apenas para mostrar que cartas podem ter valores diferentes; não balanceada.",
+      "artUrl": "/assets/farel/illustrations/HERO-002.webp"
+    },
+    {
+      "id": "CRE-001",
+      "name": "Legionário de Bronze",
+      "type": "creature",
+      "energyCost": 2,
+      "life": 4,
+      "rulesText": "Criatura básica. Não pode atacar no turno em que entra em campo.",
+      "keywords": [
+        "Soldado"
+      ],
+      "canAttackOnSummon": false,
+      "incomePerTurn": null,
+      "effectKind": "basic_creature",
+      "trigger": null,
+      "artDirection": "elmo e escudo de bronze vistos de frente; geometria simples; azul metálico discreto",
+      "demoOnly": true,
+      "demoNotes": "Carta-base para demonstrar custo, slot, vida e regra de recém-invocação.",
+      "artUrl": "/assets/farel/illustrations/CRE-001.webp"
+    },
+    {
+      "id": "CRE-002",
+      "name": "Batedora do Vento",
+      "type": "creature",
+      "energyCost": 3,
+      "life": 3,
+      "rulesText": "Ágil — pode atacar no turno em que entra em campo.",
+      "keywords": [
+        "Ágil"
+      ],
+      "canAttackOnSummon": true,
+      "incomePerTurn": null,
+      "effectKind": "agile_creature",
+      "trigger": null,
+      "artDirection": "silhueta leve em movimento com duas linhas diagonais de vento; azul-claro",
+      "demoOnly": true,
+      "demoNotes": "A exceção Ágil é coerente com o exemplo citado nas regras, mas esta carta e seus valores são fictícios.",
+      "artUrl": "/assets/farel/illustrations/CRE-002.webp"
+    },
+    {
+      "id": "CRE-003",
+      "name": "Guardião de Basalto",
+      "type": "creature",
+      "energyCost": 4,
+      "life": 7,
+      "rulesText": "Criatura resistente. A vida perdida permanece perdida após o combate.",
+      "keywords": [
+        "Resistente"
+      ],
+      "canAttackOnSummon": false,
+      "incomePerTurn": null,
+      "effectKind": "high_life_creature",
+      "trigger": null,
+      "artDirection": "golem de pedra em formas poligonais; placa central clara e textura mineral",
+      "demoOnly": true,
+      "demoNotes": "A palavra Resistente é descritiva no protótipo, não concede regra adicional.",
+      "artUrl": "/assets/farel/illustrations/CRE-003.webp"
+    },
+    {
+      "id": "CRE-004",
+      "name": "Lobo de Cinzas",
+      "type": "creature",
+      "energyCost": 2,
+      "life": 2,
+      "rulesText": "Criatura de baixo custo e pouca vida.",
+      "keywords": [
+        "Fera"
+      ],
+      "canAttackOnSummon": false,
+      "incomePerTurn": null,
+      "effectKind": "low_cost_creature",
+      "trigger": null,
+      "artDirection": "perfil geométrico de lobo com olho âmbar e fumaça cinza estilizada",
+      "demoOnly": true,
+      "demoNotes": "Serve para estados de vida baixa e destruição; sem habilidade oculta.",
+      "artUrl": "/assets/farel/illustrations/CRE-004.webp"
+    },
+    {
+      "id": "CRE-005",
+      "name": "Gladiador da Arena",
+      "type": "creature",
+      "energyCost": 3,
+      "life": 5,
+      "rulesText": "Criatura de combate. Seu dano de ataque é determinado pela rolagem de d6.",
+      "keywords": [
+        "Campeão"
+      ],
+      "canAttackOnSummon": false,
+      "incomePerTurn": null,
+      "effectKind": "standard_creature",
+      "trigger": null,
+      "artDirection": "escudo circular e elmo com crista; composição frontal; azul e bronze",
+      "demoOnly": true,
+      "demoNotes": "A carta não possui ataque fixo; a frase reforça a mecânica universal de d6.",
+      "artUrl": "/assets/farel/illustrations/CRE-005.webp"
+    },
+    {
+      "id": "CRE-006",
+      "name": "Colosso Cronal",
+      "type": "creature",
+      "energyCost": 5,
+      "life": 8,
+      "rulesText": "Uma presença imensa no campo. Não pode atacar no turno em que entra em campo.",
+      "keywords": [
+        "Colosso"
+      ],
+      "canAttackOnSummon": false,
+      "incomePerTurn": null,
+      "effectKind": "large_creature",
+      "trigger": null,
+      "artDirection": "torso colossal feito de anéis de relógio e placas de pedra; silhueta grande",
+      "demoOnly": true,
+      "demoNotes": "Custo e vida são números arbitrários de teste; não é carta oficial balanceada.",
+      "artUrl": "/assets/farel/illustrations/CRE-006.webp"
+    },
+    {
+      "id": "GEN-001",
+      "name": "Condensador de Éter",
+      "type": "generator",
+      "energyCost": 2,
+      "life": 3,
+      "rulesText": "No início dos seus turnos seguintes, gera +1 de energia enquanto permanecer em campo.",
+      "keywords": [
+        "Gerador",
+        "+1 energia"
+      ],
+      "canAttackOnSummon": null,
+      "incomePerTurn": 1,
+      "effectKind": "energy_generation",
+      "trigger": "Início de turno do controlador, após a estrutura estar em campo.",
+      "artDirection": "pequeno núcleo de energia turquesa dentro de uma armação metálica",
+      "demoOnly": true,
+      "demoNotes": "O momento de início de produção é hipótese para a demonstração: turno seguinte à construção.",
+      "artUrl": "/assets/farel/illustrations/GEN-001.webp"
+    },
+    {
+      "id": "GEN-002",
+      "name": "Mina de Éter",
+      "type": "generator",
+      "energyCost": 3,
+      "life": 4,
+      "rulesText": "No início dos seus turnos seguintes, gera +2 de energia enquanto permanecer em campo.",
+      "keywords": [
+        "Gerador",
+        "+2 energia"
+      ],
+      "canAttackOnSummon": null,
+      "incomePerTurn": 2,
+      "effectKind": "energy_generation",
+      "trigger": "Início de turno do controlador, após a estrutura estar em campo.",
+      "artDirection": "cristal turquesa encaixado em uma pequena mina antiga; formas de hexágono",
+      "demoOnly": true,
+      "demoNotes": "Carta central da demonstração. Custo, vida e renda são provisórios.",
+      "artUrl": "/assets/farel/illustrations/GEN-002.webp"
+    },
+    {
+      "id": "GEN-003",
+      "name": "Observatório Cronal",
+      "type": "generator",
+      "energyCost": 4,
+      "life": 5,
+      "rulesText": "No início dos seus turnos seguintes, gera +1 de energia enquanto permanecer em campo.",
+      "keywords": [
+        "Gerador",
+        "+1 energia"
+      ],
+      "canAttackOnSummon": null,
+      "incomePerTurn": 1,
+      "effectKind": "energy_generation",
+      "trigger": "Início de turno do controlador, após a estrutura estar em campo.",
+      "artDirection": "torre circular com aro celeste e três estrelas abstratas; verde-pedra e turquesa",
+      "demoOnly": true,
+      "demoNotes": "Usar para demonstrar que geradores têm vida e podem ser removidos do campo.",
+      "artUrl": "/assets/farel/illustrations/GEN-003.webp"
+    },
+    {
+      "id": "SPL-001",
+      "name": "Fúria Marcial",
+      "type": "spell",
+      "energyCost": 1,
+      "life": null,
+      "rulesText": "Escolha uma criatura aliada. Ela recebe +2 na próxima rolagem de ataque neste turno.",
+      "keywords": [
+        "Buff",
+        "+2 na rolagem"
+      ],
+      "canAttackOnSummon": null,
+      "incomePerTurn": null,
+      "effectKind": "attack_modifier",
+      "trigger": "Ao jogar a magia no seu turno.",
+      "artDirection": "duas linhas diagonais ascendentes sobre um símbolo de punho; acento coral",
+      "demoOnly": true,
+      "demoNotes": "O modificador +2 é apenas um exemplo de buff; o limite de rolagem modificada ainda não foi definido.",
+      "artUrl": "/assets/farel/illustrations/SPL-001.webp"
+    },
+    {
+      "id": "SPL-002",
+      "name": "Dardo Arcano",
+      "type": "spell",
+      "energyCost": 2,
+      "life": null,
+      "rulesText": "Cause 2 de dano a uma criatura inimiga escolhida.",
+      "keywords": [
+        "Dano direto"
+      ],
+      "canAttackOnSummon": null,
+      "incomePerTurn": null,
+      "effectKind": "direct_damage",
+      "trigger": "Ao jogar a magia no seu turno.",
+      "artDirection": "projétil de luz violeta atravessando um círculo de runas",
+      "demoOnly": true,
+      "demoNotes": "Dano fixo é efeito de carta de exemplo, não muda a regra de ataque com d6.",
+      "artUrl": "/assets/farel/illustrations/SPL-002.webp"
+    },
+    {
+      "id": "SPL-003",
+      "name": "Surto de Éter",
+      "type": "spell",
+      "energyCost": 2,
+      "life": null,
+      "rulesText": "Ganhe +2 de energia disponível neste turno.",
+      "keywords": [
+        "Energia temporária"
+      ],
+      "canAttackOnSummon": null,
+      "incomePerTurn": null,
+      "effectKind": "temporary_energy",
+      "trigger": "Ao jogar a magia no seu turno.",
+      "artDirection": "onda circular turquesa expandindo a partir de um núcleo brilhante",
+      "demoOnly": true,
+      "demoNotes": "O efeito depende da definição de energia não gasta; manter isolado para playtest.",
+      "artUrl": "/assets/farel/illustrations/SPL-003.webp"
+    },
+    {
+      "id": "CHN-001",
+      "name": "Escudo Reativo",
+      "type": "channelled_spell",
+      "energyCost": 2,
+      "life": null,
+      "rulesText": "Canalize escolhendo uma faixa. Quando uma criatura aliada nessa faixa fosse sofrer dano de combate, reduza esse dano em 2.",
+      "keywords": [
+        "Canalização",
+        "Proteção"
+      ],
+      "canAttackOnSummon": null,
+      "incomePerTurn": null,
+      "effectKind": "damage_reduction",
+      "trigger": "Uma criatura aliada na faixa escolhida está prestes a receber dano de combate.",
+      "artDirection": "escudo geométrico violeta envolvendo um pequeno slot de criatura",
+      "demoOnly": true,
+      "demoNotes": "Exemplo ilustrativo de condição e redução de dano; janela de resposta não definida nas regras-base.",
+      "artUrl": "/assets/farel/illustrations/CHN-001.webp"
+    },
+    {
+      "id": "CHN-002",
+      "name": "Emboscada Cronal",
+      "type": "channelled_spell",
+      "energyCost": 2,
+      "life": null,
+      "rulesText": "Canalize escolhendo uma faixa. Quando uma criatura inimiga nessa faixa iniciar um ataque, cause 2 de dano a ela.",
+      "keywords": [
+        "Canalização",
+        "Armadilha"
+      ],
+      "canAttackOnSummon": null,
+      "incomePerTurn": null,
+      "effectKind": "triggered_damage",
+      "trigger": "Uma criatura inimiga na faixa escolhida inicia um ataque.",
+      "artDirection": "anel violeta de relógio com uma seta interrompida; composição horizontal",
+      "demoOnly": true,
+      "demoNotes": "A ordem entre gatilho e ataque precisa de regra oficial; na cena, sinalizar como sequência demonstrativa.",
+      "artUrl": "/assets/farel/illustrations/CHN-002.webp"
+    },
+    {
+      "id": "CHN-003",
+      "name": "Ritual de Reserva",
+      "type": "channelled_spell",
+      "energyCost": 1,
+      "life": null,
+      "rulesText": "Canalize. No início do seu próximo turno, receba +2 de energia uma vez e descarte esta magia.",
+      "keywords": [
+        "Canalização",
+        "Atrasada"
+      ],
+      "canAttackOnSummon": null,
+      "incomePerTurn": null,
+      "effectKind": "delayed_energy",
+      "trigger": "Início do próximo turno do controlador.",
+      "artDirection": "ampulheta turquesa dentro de um círculo de runas violeta",
+      "demoOnly": true,
+      "demoNotes": "O descarte após resolver e a janela exata de energia são escolhas de protótipo, não regra-base.",
+      "artUrl": "/assets/farel/illustrations/CHN-003.webp"
+    }
+  ]
+}

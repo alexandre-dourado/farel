@@ -1,3 +1,3 @@
-﻿{
-    "change_log":  "Implementado foundation, domain types, rules config, engine core (turn/energy/draw) e combat engine (Chunks 0 a 4). Adicionado REPORT_PARTIAL_MVP.md em docs/agy."
+{
+    "change_log": "Revitalização visual completa e empacotamento para playtest: 1) Fatiamento das 17 ilustrações de 'Galeria de Cartas de Fantasia Épica.png' em public/assets/farel/illustrations/ (PNG e WebP) com manifesto; 2) Redesenho da UI Forbidden Memories: slots horizontais substituídos por pedestais de cartas verticais (h-[92px] max-w-[135px]) com ilustrações reais, moldura ornamentada e mini orbe de vida; Inspecionador PS1 ampliado para 260px; bandeja de mão atualizada com cartas verticais (w-[62px] h-[82px]); console de comando do herói unificado com Orbe de Sangue e Orbe de Mana; 3) Standalone v2/game.html (2.0 MB) 100% autossuficiente com todas as 17 ilustrações e molduras embutidas em base64; 4) Criação do pacote farel-playtest/ e compressão em farel-playtest.zip (3.0 MB) com instruções completas de execução offline; 5) 44/44 testes aprovados no Vitest."
 }

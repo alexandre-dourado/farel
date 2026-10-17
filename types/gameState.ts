@@ -7,18 +7,22 @@ export interface EventLog {
   sourceId?: string;
   targetId?: string;
   value?: number;
+  message?: string;
   timestamp: number;
 }
 
 export interface PlayerState {
   playerId: string;
+  name?: string;
   hero: Hero;
   hand: Card[];
   deck: Card[];
+  deckCount?: number;
   graveyard: Card[];
   currentEnergy: number;
   maxEnergyCap: number;
-  heroDefenseMode?: 'ALWAYS' | 'AUTO';
+  heroDefenseMode: 'AUTO' | 'ALWAYS';
+  temporaryEnergy?: number;
 }
 
 export interface GameState {

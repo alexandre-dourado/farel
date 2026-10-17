@@ -1,0 +1,296 @@
+{
+  "manifestVersion": "1.0.0",
+  "sourceImage": "assets/Galeria de Cartas de Fantasia Épica.png",
+  "exportedCount": 17,
+  "cards": [
+    {
+      "id": "HERO-001",
+      "name": "Viajante do Limiar",
+      "slug": "hero-viajante-do-limiar",
+      "type": "hero",
+      "originalLabel": "HERÓI 1",
+      "artUrl": "/assets/farel/art/cards/HERO-001.webp",
+      "galleryUrl": "/assets/farel/art/gallery/HERO-001.webp",
+      "artDimensions": {
+        "width": 230,
+        "height": 279
+      },
+      "cardDimensions": {
+        "width": 236,
+        "height": 319
+      }
+    },
+    {
+      "id": "HERO-002",
+      "name": "Imperatriz das Eras",
+      "slug": "hero-imperatriz-das-eras",
+      "type": "hero",
+      "originalLabel": "HERÓI 2",
+      "artUrl": "/assets/farel/art/cards/HERO-002.webp",
+      "galleryUrl": "/assets/farel/art/gallery/HERO-002.webp",
+      "artDimensions": {
+        "width": 230,
+        "height": 279
+      },
+      "cardDimensions": {
+        "width": 236,
+        "height": 319
+      }
+    },
+    {
+      "id": "CRE-001",
+      "name": "Legionário de Bronze",
+      "slug": "creature-legionario-de-bronze",
+      "type": "creature",
+      "originalLabel": "CRIATURA 1",
+      "artUrl": "/assets/farel/art/cards/CRE-001.webp",
+      "galleryUrl": "/assets/farel/art/gallery/CRE-001.webp",
+      "artDimensions": {
+        "width": 230,
+        "height": 279
+      },
+      "cardDimensions": {
+        "width": 236,
+        "height": 319
+      }
+    },
+    {
+      "id": "CRE-004",
+      "name": "Lobo de Cinzas",
+      "slug": "creature-lobo-de-cinzas",
+      "type": "creature",
+      "originalLabel": "CRIATURA 2",
+      "artUrl": "/assets/farel/art/cards/CRE-004.webp",
+      "galleryUrl": "/assets/farel/art/gallery/CRE-004.webp",
+      "artDimensions": {
+        "width": 230,
+        "height": 279
+      },
+      "cardDimensions": {
+        "width": 236,
+        "height": 319
+      }
+    },
+    {
+      "id": "CRE-003",
+      "name": "Guardião de Basalto",
+      "slug": "creature-guardiao-de-basalto",
+      "type": "creature",
+      "originalLabel": "CRIATURA 3",
+      "artUrl": "/assets/farel/art/cards/CRE-003.webp",
+      "galleryUrl": "/assets/farel/art/gallery/CRE-003.webp",
+      "artDimensions": {
+        "width": 230,
+        "height": 279
+      },
+      "cardDimensions": {
+        "width": 236,
+        "height": 319
+      }
+    },
+    {
+      "id": "CRE-006",
+      "name": "Colosso Cronal (Dragão das Fendas)",
+      "slug": "creature-dragao-das-fendas",
+      "type": "creature",
+      "originalLabel": "CRIATURA 4",
+      "artUrl": "/assets/farel/art/cards/CRE-006.webp",
+      "galleryUrl": "/assets/farel/art/gallery/CRE-006.webp",
+      "artDimensions": {
+        "width": 230,
+        "height": 279
+      },
+      "cardDimensions": {
+        "width": 236,
+        "height": 319
+      }
+    },
+    {
+      "id": "CRE-002",
+      "name": "Batedora do Vento",
+      "slug": "creature-batedora-do-vento",
+      "type": "creature",
+      "originalLabel": "CRIATURA 5",
+      "artUrl": "/assets/farel/art/cards/CRE-002.webp",
+      "galleryUrl": "/assets/farel/art/gallery/CRE-002.webp",
+      "artDimensions": {
+        "width": 230,
+        "height": 269
+      },
+      "cardDimensions": {
+        "width": 236,
+        "height": 307
+      }
+    },
+    {
+      "id": "GEN-001",
+      "name": "Condensador de Éter (Fortaleza)",
+      "slug": "structure-condensador-de-eter",
+      "type": "generator",
+      "originalLabel": "ESTRUTURA 1",
+      "artUrl": "/assets/farel/art/cards/GEN-001.webp",
+      "galleryUrl": "/assets/farel/art/gallery/GEN-001.webp",
+      "artDimensions": {
+        "width": 230,
+        "height": 269
+      },
+      "cardDimensions": {
+        "width": 236,
+        "height": 307
+      }
+    },
+    {
+      "id": "GEN-002",
+      "name": "Mina de Éter (Forja Profunda)",
+      "slug": "structure-mina-de-eter",
+      "type": "generator",
+      "originalLabel": "ESTRUTURA 2",
+      "artUrl": "/assets/farel/art/cards/GEN-002.webp",
+      "galleryUrl": "/assets/farel/art/gallery/GEN-002.webp",
+      "artDimensions": {
+        "width": 230,
+        "height": 269
+      },
+      "cardDimensions": {
+        "width": 236,
+        "height": 307
+      }
+    },
+    {
+      "id": "GEN-003",
+      "name": "Observatório Cronal",
+      "slug": "structure-observatorio-cronal",
+      "type": "generator",
+      "originalLabel": "ESTRUTURA 3",
+      "artUrl": "/assets/farel/art/cards/GEN-003.webp",
+      "galleryUrl": "/assets/farel/art/gallery/GEN-003.webp",
+      "artDimensions": {
+        "width": 230,
+        "height": 269
+      },
+      "cardDimensions": {
+        "width": 236,
+        "height": 307
+      }
+    },
+    {
+      "id": "GEN-004",
+      "name": "Moinho dos Ventos",
+      "slug": "structure-moinho-dos-ventos",
+      "type": "generator",
+      "originalLabel": "ESTRUTURA 4",
+      "artUrl": "/assets/farel/art/cards/GEN-004.webp",
+      "galleryUrl": "/assets/farel/art/gallery/GEN-004.webp",
+      "artDimensions": {
+        "width": 230,
+        "height": 269
+      },
+      "cardDimensions": {
+        "width": 236,
+        "height": 307
+      }
+    },
+    {
+      "id": "GEN-005",
+      "name": "Santuário das Quedas",
+      "slug": "structure-santuario-das-quedas",
+      "type": "generator",
+      "originalLabel": "ESTRUTURA 5",
+      "artUrl": "/assets/farel/art/cards/GEN-005.webp",
+      "galleryUrl": "/assets/farel/art/gallery/GEN-005.webp",
+      "artDimensions": {
+        "width": 230,
+        "height": 269
+      },
+      "cardDimensions": {
+        "width": 236,
+        "height": 307
+      }
+    },
+    {
+      "id": "SPL-002",
+      "name": "Dardo Arcano (Raio de Éter)",
+      "slug": "spell-dardo-arcano",
+      "type": "spell",
+      "originalLabel": "MAGIA INSTANTÂNEA 1",
+      "artUrl": "/assets/farel/art/cards/SPL-002.webp",
+      "galleryUrl": "/assets/farel/art/gallery/SPL-002.webp",
+      "artDimensions": {
+        "width": 257,
+        "height": 250
+      },
+      "cardDimensions": {
+        "width": 263,
+        "height": 291
+      }
+    },
+    {
+      "id": "SPL-003",
+      "name": "Surto de Éter (Chuva de Meteoros)",
+      "slug": "spell-surto-de-eter",
+      "type": "spell",
+      "originalLabel": "MAGIA INSTANTÂNEA 2",
+      "artUrl": "/assets/farel/art/cards/SPL-003.webp",
+      "galleryUrl": "/assets/farel/art/gallery/SPL-003.webp",
+      "artDimensions": {
+        "width": 257,
+        "height": 250
+      },
+      "cardDimensions": {
+        "width": 263,
+        "height": 291
+      }
+    },
+    {
+      "id": "SPL-001",
+      "name": "Fúria Marcial (Escudo de Glifos)",
+      "slug": "spell-furia-marcial",
+      "type": "spell",
+      "originalLabel": "MAGIA INSTANTÂNEA 3",
+      "artUrl": "/assets/farel/art/cards/SPL-001.webp",
+      "galleryUrl": "/assets/farel/art/gallery/SPL-001.webp",
+      "artDimensions": {
+        "width": 257,
+        "height": 250
+      },
+      "cardDimensions": {
+        "width": 263,
+        "height": 291
+      }
+    },
+    {
+      "id": "CHN-001",
+      "name": "Escudo Reativo (Vórtice Sombrio)",
+      "slug": "channel-escudo-reativo",
+      "type": "channelled_spell",
+      "originalLabel": "MAGIA CANALIZADA 1",
+      "artUrl": "/assets/farel/art/cards/CHN-001.webp",
+      "galleryUrl": "/assets/farel/art/gallery/CHN-001.webp",
+      "artDimensions": {
+        "width": 257,
+        "height": 250
+      },
+      "cardDimensions": {
+        "width": 263,
+        "height": 291
+      }
+    },
+    {
+      "id": "CHN-002",
+      "name": "Emboscada Cronal (Serpente Espiritual)",
+      "slug": "channel-emboscada-cronal",
+      "type": "channelled_spell",
+      "originalLabel": "MAGIA CANALIZADA 2",
+      "artUrl": "/assets/farel/art/cards/CHN-002.webp",
+      "galleryUrl": "/assets/farel/art/gallery/CHN-002.webp",
+      "artDimensions": {
+        "width": 257,
+        "height": 250
+      },
+      "cardDimensions": {
+        "width": 263,
+        "height": 291
+      }
+    }
+  ]
+}

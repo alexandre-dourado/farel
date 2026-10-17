@@ -6,17 +6,26 @@ export interface Card {
   name: string;
   type: CardType;
   description: string;
+  rulesText?: string;
+  keywords?: string[];
   energyCost: number;
-  canAttackOnEntry?: boolean;
   health?: number;
+  maxHealth?: number;
   attackModifier?: number;
   energyBonus?: number;
+  incomePerTurn?: number | null;
+  canAttackOnEntry?: boolean | null;
+  effectKind?: string;
+  trigger?: string | null;
+  artDirection?: string;
+  artUrl?: string;
 }
 
 export interface Player {
   id: string;
   userId?: string;
   name?: string;
+  heroId?: string;
 }
 
 export interface Hero {
@@ -24,7 +33,11 @@ export interface Hero {
   name: string;
   maxHealth: number;
   health: number;
+  baseDefense: number;
+  armor?: number;
   baseEnergy: number;
+  artDirection?: string;
+  artUrl?: string;
 }
 
 export interface Creature {
@@ -35,9 +48,13 @@ export interface Creature {
   status: EntityStatus;
   maxHealth: number;
   health: number;
+  armor: number;
   attackModifier: number;
-  summonedOnTurn: number;
-  canAttackOnEntry?: boolean;
+  summonedOnTurn?: number;
+  canAttackOnEntry?: boolean | null;
+  keywords?: string[];
+  artDirection?: string;
+  artUrl?: string;
 }
 
 export interface Structure {
@@ -49,6 +66,8 @@ export interface Structure {
   maxHealth: number;
   health: number;
   energyBonus: number;
+  artDirection?: string;
+  artUrl?: string;
 }
 
 export interface Spell {
@@ -56,4 +75,6 @@ export interface Spell {
   instanceId: string;
   cardId: string;
   name: string;
+  effectKind?: string;
 }
+

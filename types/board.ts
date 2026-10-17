@@ -1,8 +1,10 @@
-import { Creature, Structure } from './entities';
+import { Creature, Structure, Card } from './entities';
 
 export interface ChannelingSlot {
   cardInstanceId: string;
   turnsRemaining: number;
+  card?: Card;
+  laneIndex?: number;
 }
 
 export interface LaneState {

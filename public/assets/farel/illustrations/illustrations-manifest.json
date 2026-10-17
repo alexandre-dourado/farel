@@ -1,0 +1,141 @@
+{
+  "total": 17,
+  "illustrations": [
+    {
+      "name": "heroi_1",
+      "cardId": "HERO-001",
+      "width": 227,
+      "height": 275,
+      "png": "/assets/farel/illustrations/heroi_1.png",
+      "webp": "/assets/farel/illustrations/heroi_1.webp"
+    },
+    {
+      "name": "heroi_2",
+      "cardId": "HERO-002",
+      "width": 228,
+      "height": 275,
+      "png": "/assets/farel/illustrations/heroi_2.png",
+      "webp": "/assets/farel/illustrations/heroi_2.webp"
+    },
+    {
+      "name": "criatura_1",
+      "cardId": "CRE-001",
+      "width": 228,
+      "height": 275,
+      "png": "/assets/farel/illustrations/criatura_1.png",
+      "webp": "/assets/farel/illustrations/criatura_1.webp"
+    },
+    {
+      "name": "criatura_2",
+      "cardId": "CRE-002",
+      "width": 227,
+      "height": 275,
+      "png": "/assets/farel/illustrations/criatura_2.png",
+      "webp": "/assets/farel/illustrations/criatura_2.webp"
+    },
+    {
+      "name": "criatura_3",
+      "cardId": "CRE-003",
+      "width": 226,
+      "height": 275,
+      "png": "/assets/farel/illustrations/criatura_3.png",
+      "webp": "/assets/farel/illustrations/criatura_3.webp"
+    },
+    {
+      "name": "criatura_4",
+      "cardId": "CRE-004",
+      "width": 227,
+      "height": 275,
+      "png": "/assets/farel/illustrations/criatura_4.png",
+      "webp": "/assets/farel/illustrations/criatura_4.webp"
+    },
+    {
+      "name": "criatura_5",
+      "cardId": "CRE-005",
+      "width": 227,
+      "height": 264,
+      "png": "/assets/farel/illustrations/criatura_5.png",
+      "webp": "/assets/farel/illustrations/criatura_5.webp"
+    },
+    {
+      "name": "estrutura_1",
+      "cardId": "GEN-001",
+      "width": 228,
+      "height": 264,
+      "png": "/assets/farel/illustrations/estrutura_1.png",
+      "webp": "/assets/farel/illustrations/estrutura_1.webp"
+    },
+    {
+      "name": "estrutura_2",
+      "cardId": "GEN-002",
+      "width": 228,
+      "height": 264,
+      "png": "/assets/farel/illustrations/estrutura_2.png",
+      "webp": "/assets/farel/illustrations/estrutura_2.webp"
+    },
+    {
+      "name": "estrutura_3",
+      "cardId": "GEN-003",
+      "width": 227,
+      "height": 264,
+      "png": "/assets/farel/illustrations/estrutura_3.png",
+      "webp": "/assets/farel/illustrations/estrutura_3.webp"
+    },
+    {
+      "name": "estrutura_4",
+      "cardId": "GEN-004",
+      "width": 226,
+      "height": 264,
+      "png": "/assets/farel/illustrations/estrutura_4.png",
+      "webp": "/assets/farel/illustrations/estrutura_4.webp"
+    },
+    {
+      "name": "estrutura_5",
+      "cardId": "GEN-005",
+      "width": 227,
+      "height": 264,
+      "png": "/assets/farel/illustrations/estrutura_5.png",
+      "webp": "/assets/farel/illustrations/estrutura_5.webp"
+    },
+    {
+      "name": "magia_instantanea_1",
+      "cardId": "SPL-001",
+      "width": 254,
+      "height": 246,
+      "png": "/assets/farel/illustrations/magia_instantanea_1.png",
+      "webp": "/assets/farel/illustrations/magia_instantanea_1.webp"
+    },
+    {
+      "name": "magia_instantanea_2",
+      "cardId": "SPL-002",
+      "width": 255,
+      "height": 246,
+      "png": "/assets/farel/illustrations/magia_instantanea_2.png",
+      "webp": "/assets/farel/illustrations/magia_instantanea_2.webp"
+    },
+    {
+      "name": "magia_instantanea_3",
+      "cardId": "SPL-003",
+      "width": 246,
+      "height": 246,
+      "png": "/assets/farel/illustrations/magia_instantanea_3.png",
+      "webp": "/assets/farel/illustrations/magia_instantanea_3.webp"
+    },
+    {
+      "name": "magia_canalizada_1",
+      "cardId": "CHN-001",
+      "width": 254,
+      "height": 246,
+      "png": "/assets/farel/illustrations/magia_canalizada_1.png",
+      "webp": "/assets/farel/illustrations/magia_canalizada_1.webp"
+    },
+    {
+      "name": "magia_canalizada_2",
+      "cardId": "CHN-002",
+      "width": 254,
+      "height": 246,
+      "png": "/assets/farel/illustrations/magia_canalizada_2.png",
+      "webp": "/assets/farel/illustrations/magia_canalizada_2.webp"
+    }
+  ]
+}

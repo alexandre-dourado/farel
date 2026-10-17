@@ -1,0 +1,116 @@
+{
+  "manifestVersion": "1.2.0",
+  "sourceImage": "Folha de Cartas Fantásticas Ornamentadas.png",
+  "sourceDimensions": {
+    "width": 1536,
+    "height": 1024
+  },
+  "exportedAt": "2026-10-17",
+  "hasTransparentBackground": true,
+  "assetsCount": 6,
+  "assets": [
+    {
+      "id": "card-back",
+      "type": "back",
+      "title": "Verso Oficial Fantástico",
+      "png": "/assets/farel/cards/card-back.png",
+      "webp": "/assets/farel/cards/card-back.webp",
+      "width": 302,
+      "height": 397,
+      "aspectRatio": 0.7607,
+      "hasAlpha": true,
+      "artWindow": null,
+      "notes": "Verso rúnico azul profundo e dourado com fundo transparente externo."
+    },
+    {
+      "id": "template-hero",
+      "type": "hero",
+      "title": "Herói (Elo Mortal)",
+      "png": "/assets/farel/cards/template-hero.png",
+      "webp": "/assets/farel/cards/template-hero.webp",
+      "width": 340,
+      "height": 397,
+      "aspectRatio": 0.8564,
+      "hasAlpha": true,
+      "artWindow": {
+        "x": 0.07,
+        "y": 0.08,
+        "width": 0.86,
+        "height": 0.44
+      },
+      "notes": "Moldura régia de ouro antigo com fundo transparente e ornamentos nas quinas."
+    },
+    {
+      "id": "template-creature",
+      "type": "creature",
+      "title": "Criatura Tática",
+      "png": "/assets/farel/cards/template-creature.png",
+      "webp": "/assets/farel/cards/template-creature.webp",
+      "width": 306,
+      "height": 397,
+      "aspectRatio": 0.7708,
+      "hasAlpha": true,
+      "artWindow": {
+        "x": 0.07,
+        "y": 0.08,
+        "width": 0.86,
+        "height": 0.44
+      },
+      "notes": "Moldura esmeralda com selo rúnico foliar e bordas externas transparentes."
+    },
+    {
+      "id": "template-structure",
+      "type": "structure",
+      "title": "Estrutura Geradora",
+      "png": "/assets/farel/cards/template-structure.png",
+      "webp": "/assets/farel/cards/template-structure.webp",
+      "width": 308,
+      "height": 402,
+      "aspectRatio": 0.7662,
+      "hasAlpha": true,
+      "artWindow": {
+        "x": 0.07,
+        "y": 0.08,
+        "width": 0.86,
+        "height": 0.44
+      },
+      "notes": "Moldura em pedra/prata rúnica com ícone de fortaleza e bordas transparentes."
+    },
+    {
+      "id": "template-spell-instant",
+      "type": "spell-instant",
+      "title": "Magia Instantânea",
+      "png": "/assets/farel/cards/template-spell-instant.png",
+      "webp": "/assets/farel/cards/template-spell-instant.webp",
+      "width": 332,
+      "height": 402,
+      "aspectRatio": 0.8259,
+      "hasAlpha": true,
+      "artWindow": {
+        "x": 0.07,
+        "y": 0.08,
+        "width": 0.86,
+        "height": 0.44
+      },
+      "notes": "Moldura de chamas carmesim com ícone de fogo e bordas transparentes."
+    },
+    {
+      "id": "template-spell-channel",
+      "type": "spell-channel",
+      "title": "Magia Canalizada",
+      "png": "/assets/farel/cards/template-spell-channel.png",
+      "webp": "/assets/farel/cards/template-spell-channel.webp",
+      "width": 308,
+      "height": 402,
+      "aspectRatio": 0.7662,
+      "hasAlpha": true,
+      "artWindow": {
+        "x": 0.07,
+        "y": 0.08,
+        "width": 0.86,
+        "height": 0.44
+      },
+      "notes": "Moldura de ametista arcana com espiral de invocação e bordas transparentes."
+    }
+  ]
+}

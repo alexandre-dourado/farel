@@ -1,4 +1,4 @@
-﻿import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { resolveAttack } from '../game/engine/combat';
 import { createGame, startGame } from '../game/engine';
 import { GameState } from '../types/gameState';
@@ -19,12 +19,13 @@ describe('Combat Engine', () => {
       instanceId: 'i1',
       cardId: 'card1',
       name: 'Attacker',
-      status: EntityStatus.SUMMONED,
+      status: EntityStatus.READY,
       maxHealth: 10,
       health: 10,
-            attackModifier: 2,
+      armor: 0,
+      attackModifier: 2,
       summonedOnTurn: 0,
-      canAttackOnEntry: true
+      canAttackOnEntry: false
     };
   });
 
@@ -34,36 +35,56 @@ describe('Combat Engine', () => {
       instanceId: 'i2',
       cardId: 'card2',
       name: 'Defender',
-      status: EntityStatus.SUMMONED,
+      status: EntityStatus.READY,
       maxHealth: 10,
       health: 10,
-            attackModifier: 0,
+      armor: 1,
+      attackModifier: 0,
       summonedOnTurn: 0
     };
 
-    vi.spyOn(Math, 'random').mockReturnValue(0.5); // roll 4
+    vi.spyOn(Math, 'random').mockReturnValue(0.5); // roll 4 (Math.floor(0.5 * 6) + 1 = 4)
     
     const newState = resolveAttack(state, p1Id, 0);
-    // damage = 4 + 2 = 6. no armor. final = 6
-    expect(newState.board.lanes[0].p2Creature?.health).toBe(4);
+    // damage = 4 + 2 = 6. armor = 1. final = 5
+    expect(newState.board.lanes[0].p2Creature?.health).toBe(5);
   });
 
-  it('should target hero if lane is empty and no structure', () => {
-    vi.spyOn(Math, 'random').mockReturnValue(0.5); // roll 4
+  it('should target structure before hero if lane is empty', () => {
+    state.board.backline[p2Id].structures[0] = {
+      id: 's1',
+      instanceId: 'is1',
+      cardId: 'GEN-001',
+      name: 'Condensador de Éter',
+      status: EntityStatus.READY,
+      maxHealth: 3,
+      health: 3,
+      energyBonus: 1
+    };
+
+    vi.spyOn(Math, 'random').mockReturnValue(0.5); // roll 4 -> damage = 4 + 2 = 6
     const newState = resolveAttack(state, p1Id, 0);
-    // damage = 4 + 2 = 6. no defense
-    expect(newState.players[p2Id].hero.health).toBe(14);
+    // Structure with 3 health takes 6 damage -> destroyed (null)
+    expect(newState.board.backline[p2Id].structures[0]).toBeNull();
+    // Hero remains untouched
+    expect(newState.players[p2Id].hero.health).toBe(30);
+  });
+
+  it('should target hero if lane is empty and no structure exists', () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0.5); // roll 4 -> damage = 6
+    const newState = resolveAttack(state, p1Id, 0);
+    // Imperatriz starts with 30 HP - 6 = 24 HP
+    expect(newState.players[p2Id].hero.health).toBe(24);
   });
   
-  it('should let hero defend directly and trigger game over if dead', () => {
+  it('should let hero intercept directly when heroDefenseMode is ALWAYS', () => {
     state.players[p2Id].hero.health = 5;
+    state.players[p2Id].heroDefenseMode = 'ALWAYS';
     
-    vi.spyOn(Math, 'random').mockReturnValue(0.8); // roll 5
+    vi.spyOn(Math, 'random').mockReturnValue(0.8); // roll 5 -> damage = 5 + 2 = 7
     const newState = resolveAttack(state, p1Id, 0);
-    // damage = 5 + 2 = 7. final damage = 7. hero health = 5 - 7 = -2
-    expect(newState.players[p2Id].hero.health).toBeLessThanOrEqual(0);
+    // damage = 7. hero health = 5 - 7 <= 0
+    expect(newState.players[p2Id].hero.health).toBe(0);
     expect(newState.status).toBe(GameStatus.FINISHED);
   });
 });
-
-
